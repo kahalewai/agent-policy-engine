@@ -1128,9 +1128,11 @@ All execution-capable components **must consult the Runtime Controller** before 
 * Configuration-driven policy
 * Code-enforced authority
 * Capability-based security model
+* Explicit state machine enforcement
 * Hash-based immutability
 * Schema-validated inputs
 * Zero-trust data handling
+* Deterministic failure modes
 
 ---
 
@@ -1237,7 +1239,7 @@ Intent defines:
 Properties:
 
 * Created from user input
-* **Validated against a mandatory JSON Schema**
+* Validated against a mandatory JSON Schema
 * Canonically serialized
 * Immutable after set
 * Versioned via cryptographic hash (`intent_version`)
@@ -1285,6 +1287,7 @@ An Action consists of:
 * `tool_id` – tool to invoke
 * `parameters` – schema-validated object
 * `intent_version` – hash binding
+* `intent_scope` – scope reference
 * `plan_hash` – hash binding
 * `plan_step_index` – integer index
 
@@ -1294,6 +1297,13 @@ Actions are:
 * Comparable
 * Auditable
 * Deterministically bound to authority
+* Matchable by policy
+
+Each Action execution must be bound to:
+
+* Intent version
+* Plan hash
+* Plan step index
 
 ---
 
@@ -1313,7 +1323,7 @@ Rules:
 * Provenance is immutable
 * Mixed provenance results in `EXTERNAL_UNTRUSTED`
 * Untrusted data may inform reasoning
-* **Untrusted data may not participate in authority creation, modification, escalation, or approval**
+* EXTERNAL_UNTRUSTED data may not participate in authority creation, modification, escalation, or approval
 
 Provenance enforcement is **code-level**, not advisory.
 
@@ -1327,6 +1337,7 @@ It represents permission to execute **exactly one action**.
 
 #### 5.5.1 AuthorityToken Properties
 
+* Issued only by the Authority Manager
 * Cryptographically strong opaque identifier
 * In-memory only
 * Non-serializable
@@ -1340,8 +1351,8 @@ AuthorityToken **must** contain:
 
 * `token_id`
 * `tenant_id` (optional, if multi-tenant enabled)
-* `intent_version`
-* `plan_hash`
+* `intent_version` - hash
+* `plan_hash` - hash
 * `action_id`
 * `plan_step_index`
 * `issued_at`
@@ -1363,9 +1374,17 @@ AuthorityTokens are revoked on:
 * Intent update
 * Plan invalidation
 * Runtime termination
+* Policy violation
 * Policy reload
 * Escalation denial
-* Tenant mismatch
+* Tenant mismatch (if enabled)
+
+Tokens are:
+
+* In-memory only
+* Non-serializable
+* Non-transferable
+* Non-reusable
 
 #### 5.5.4 Cryptography Clarification
 
@@ -1377,6 +1396,22 @@ Rationale:
 * Tokens are never persisted
 * Security derives from unforgeability and containment
 
+#### 5.5.5 Mandatory Enforcement Contract
+
+Normative Rule:
+
+No tool execution may occur without a valid AuthorityToken.
+
+The Enforcement Gate must:
+
+* Require an AuthorityToken for every tool invocation
+* Validate token authenticity
+* Verify token matches the action
+* Verify token is unexpired and unconsumed
+* Reject execution if any check fails
+
+Any tool execution without a valid AuthorityToken is a security violation.
+
 ---
 
 ### 5.6 Policy
@@ -1385,6 +1420,7 @@ A Policy is a deterministic rule set defining:
 
 * Allowed actions
 * Forbidden actions
+* Tool transition rules
 * Escalation requirements
 * Default-deny behavior
 
@@ -1392,7 +1428,7 @@ Policies are:
 
 * Declarative
 * YAML-based
-* **Schema-validated**
+* Schema-validated
 * Loaded at runtime
 * Immutable during execution
 
