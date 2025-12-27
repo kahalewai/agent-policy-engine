@@ -1468,43 +1468,57 @@ Each component has a **single, explicit responsibility**.
 * Enforces legal transitions
 * Blocks illegal execution paths
 
-Failure behavior: hard reject with `RuntimeStateError`.
+Failure behavior: hard reject execution with `RuntimeStateError`.
 
 ---
 
 ### 7.2 Intent Manager
 
-* Validates intent schema
+* Constructs intent objects
+* Validates intent schema against mandatory JSON Schema
 * Computes intent hash
 * Enforces immutability
 * Triggers revocation on update
+* Handles intent updates and resets
+
+Failure behavior: reject malformed intent.
 
 ---
 
 ### 7.3 Plan Manager
 
-* Validates plan schema
+* Accepts plan proposals
+* Validates plan schema against mandatory JSON Schema
+* Validates against intent
 * Computes plan hash
 * Detects mutation
 * Freezes approved plans
+
+Failure behavior: deny execution
 
 ---
 
 ### 7.4 Provenance Manager
 
-* Assigns provenance
+* Assigns provenance labels
+* Propagates provenance
 * Enforces authority restrictions
 * Prevents provenance escalation
+
+Failure behavior: default to EXTERNAL_UNTRUSTED
 
 ---
 
 ### 7.5 Policy Engine
 
 * Loads policy files
-* Validates schema
-* Evaluates deterministically
+* Validates policy schema against mandatory JSON Schema
+* Evaluates rules deterministically
+* Resolves conflicts via defined precedence
 * Returns `ALLOW`, `DENY`, or `ESCALATE`
 * Supports simulation mode
+
+Failure behavior: deny.
 
 ---
 
@@ -1512,8 +1526,13 @@ Failure behavior: hard reject with `RuntimeStateError`.
 
 * Issues AuthorityTokens
 * Tracks lifecycle
+* Tracks expiration
 * Enforces single-use
+* Prevents reuse
 * Revokes on invalidation
+* Revokes tokens on violations
+
+Failure behavior: deny
 
 ---
 
@@ -1522,19 +1541,37 @@ Failure behavior: hard reject with `RuntimeStateError`.
 * Intercepts all tool calls
 * Requires valid AuthorityToken
 * Executes or blocks
-* Emits audit events
+* Emits audit events or logs
+
+Failure behavior: block execution.
 
 ---
 
 ### 7.8 Escalation Handler
 
-* Integration hook only
-* Does not implement UI
-* Default behavior: deny
+* Is an Integration hook only
+* Does not implement UI or approval logic
+* Must be provided by the host application
+  
+Default behavior: deny escalation
 
 ---
 
-### 7.9 Formal Verification Exporter
+### 7.9 Schema Validators
+
+Schemas are mandatory for:
+
+  * Intent
+  * Plan
+  * Policy
+
+Schema must be validated against mandatory JSON Schema
+
+Failure behavior: hard reject
+
+---
+
+### 7.10 Formal Verification Exporter
 
 * Exports policy models for:
 
@@ -1543,13 +1580,17 @@ Failure behavior: hard reject with `RuntimeStateError`.
   * Z3
   * Dafny
 
-Purpose: independent verification of invariants.
+Purpose:
+
+  * independent verification of invariants
+  * Machine-checkable invariants
+  * Independent security review
 
 ---
 
 ## 8. Runtime State Machine
 
-### 8.1 States
+### 8.1 Valid states
 
 * `INITIALIZED`
 * `INTENT_SET`
@@ -1558,10 +1599,12 @@ Purpose: independent verification of invariants.
 * `ESCALATION_REQUIRED`
 * `TERMINATED`
 
-### 8.2 Rules
+### 8.2 State transition Rules
 
 * Illegal transitions are rejected
+* Illegal transitions are security violations, not warnings.
 * Execution requires `EXECUTING`
+* Execution must not proceed unless state is EXECUTING.
 * Escalation pauses authority issuance
 
 ---
@@ -1572,13 +1615,16 @@ Purpose: independent verification of invariants.
 
 1. Initialize runtime
 2. Set intent
-3. Propose plan
-4. Approve plan
-5. Transition to EXECUTING
-6. Evaluate policy
-7. Issue AuthorityToken
-8. Enforce via gate
-9. Audit result
+3. Agent Proposes plan
+4. Plan is approved
+5. Agent requests action
+6. Transition to EXECUTING
+7. Evaluate policy
+8. Issue AuthorityToken
+9. Tool executed via Enforcement gate
+10. Result tagged with provenance
+11. Audit result
+12. Loop continues
 
 ---
 
@@ -1586,9 +1632,11 @@ Purpose: independent verification of invariants.
 
 1. Policy returns `ESCALATE`
 2. Runtime enters `ESCALATION_REQUIRED`
-3. Escalation handler invoked
-4. Approval resumes execution
-5. Denial terminates runtime
+3. Authority issuance halts
+4. Application requests user confirmation
+5. Escalation handler invoked
+6. Approval resumes execution
+7. Denial terminates runtime
 
 ---
 
@@ -1604,6 +1652,12 @@ Typed, deterministic errors:
 * `UnauthorizedActionError`
 * `RuntimeStateError`
 * `ProvenanceError`
+
+Errors are:
+
+* deterministic and explicit
+* Typed
+* Non-recoverable unless explicitly handled
 
 ---
 
