@@ -1238,19 +1238,21 @@ Intent defines:
 
 Properties:
 
-* Created from user input
-* Validated against a mandatory JSON Schema
-* Canonically serialized
-* Immutable after set
-* Versioned via cryptographic hash (`intent_version`)
-* Stored in runtime state
+* Intent must be created from user input
+* Intent must be validated against a mandatory JSON Schema
+* Intent must be Canonically serialized
+* Intent must be Immutable after set
+* Intent must be Immutable during execution
+* Intent must be explicitly versioned via cryptographic hash (`intent_version`)
+* Intent must produce a stable intent_version hash
+* Intent must be stored in runtime state
 
 Intent update rules:
 
-* Requires explicit user action
-* Invalidates the current plan
-* Revokes all issued AuthorityTokens
-* Resets runtime state to `INTENT_SET`
+* Any intent update requires explicit user action
+* Any intent update invalidates the current plan
+* Any intent update revokes all issued AuthorityTokens
+* Any intent update resets runtime state to `INTENT_SET`
 
 ---
 
@@ -1260,20 +1262,22 @@ A Plan is an **explicit, ordered list of intended actions**.
 
 Plan properties:
 
-* Proposed by the agent
-* Validated against intent
-* **Validated against a mandatory JSON Schema**
-* Frozen upon approval
-* Canonically serialized
-* Has a stable cryptographic hash (`plan_hash`)
-* Linear (no branching or looping)
-* Immutable once approved
+* Plan must be proposed by the agent
+* Plan must be validated against intent
+* Plan must be validated against a mandatory JSON Schema
+* Plan must be frozen upon approval
+* Plan must be canonically serialized
+* Plan must have a stable cryptographic hash (`plan_hash`)
+* Plan must be linear (no branching or looping)
+* Plan must be immutable once approved
 
 Plan mutation rules:
 
-* Any change invalidates the plan
-* Revokes all issued AuthorityTokens
-* Requires re-submission and approval
+* Any plan change invalidates the plan
+* Any plan change invalidates plan hash
+* Any plan change invalidates runtime execution state
+* Any plan change revokes all issued AuthorityTokens
+* Any plan change requires re-submission and approval
 
 ---
 
@@ -1320,9 +1324,10 @@ Provenance categories:
 Rules:
 
 * Provenance is mandatory
-* Provenance is immutable
+* Provenance is immutable once assigned
 * Mixed provenance results in `EXTERNAL_UNTRUSTED`
 * Untrusted data may inform reasoning
+* Untrusted data may not create, modify, or expand authority
 * EXTERNAL_UNTRUSTED data may not participate in authority creation, modification, escalation, or approval
 
 Provenance enforcement is **code-level**, not advisory.
@@ -1339,6 +1344,7 @@ It represents permission to execute **exactly one action**.
 
 * Issued only by the Authority Manager
 * Cryptographically strong opaque identifier
+* Opaque to the agent
 * In-memory only
 * Non-serializable
 * Non-transferable
@@ -1347,17 +1353,17 @@ It represents permission to execute **exactly one action**.
 
 #### 5.5.2 AuthorityToken Structure
 
-AuthorityToken **must** contain:
+An AuthorityToken **must** contain:
 
-* `token_id`
-* `tenant_id` (optional, if multi-tenant enabled)
+* `token_id` - cryptographically strong, unique opaque identifier
+* `tenant_id` - optional, if multi-tenant mode enabled
 * `intent_version` - hash
 * `plan_hash` - hash
-* `action_id`
+* `action_id` - bound action identifier
 * `plan_step_index`
-* `issued_at`
-* `expires_at`
-* `consumed`
+* `issued_at` - timestamp
+* `expires_at` - timestamp
+* `consumed` - boolean flag
 
 #### 5.5.3 AuthorityToken Lifecycle
 
@@ -1377,7 +1383,7 @@ AuthorityTokens are revoked on:
 * Policy violation
 * Policy reload
 * Escalation denial
-* Tenant mismatch (if enabled)
+* Tenant mismatch (if tenant mode enabled)
 
 Tokens are:
 
@@ -1394,7 +1400,7 @@ Rationale:
 
 * Tokens are never transmitted
 * Tokens are never persisted
-* Security derives from unforgeability and containment
+* Security derives from unforgeability and containment, not secrecy
 
 #### 5.5.5 Mandatory Enforcement Contract
 
@@ -1428,7 +1434,7 @@ Policies are:
 
 * Declarative
 * YAML-based
-* Schema-validated
+* Schema-validated against mandatory JSON Schema
 * Loaded at runtime
 * Immutable during execution
 
