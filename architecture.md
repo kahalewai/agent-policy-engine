@@ -1599,6 +1599,8 @@ Purpose:
 * `ESCALATION_REQUIRED`
 * `TERMINATED`
 
+---
+
 ### 8.2 State transition Rules
 
 * Illegal transitions are rejected
@@ -1663,42 +1665,76 @@ Errors are:
 
 ## 11. Installation & Packaging
 
+### 11.1 Language Target
+
 * Python ≥ 3.10
+
+### 11.2 Distribution
+
 * Installable via `pip`
+
+### 11.3 Dependencies
+
+* No external services
 * No network dependencies
-* CLI included as optional dependency
+* Core runtime has zero optional runtime dependencies
+
+### 11.2 Optional Components
+
+* CLI tools are included but optional to use
+* Multi-tenant mode is included but optional to use
 
 ---
 
 ## 12. Repository Structure
 
-```
 ape/
-├── runtime/
-├── intent/
-├── plan/
-├── provenance/
-├── policy/
-├── authority/
-├── enforcement/
-├── escalation/
-├── audit/
-├── cli/
-├── reference_agent/
+├── pyproject.toml
+├── ape/
+│   ├── runtime/
+│   ├── intent/
+│   ├── plan/
+│   ├── policy/
+│   ├── provenance/
+│   ├── authority/
+│   ├── enforcement/
+│   ├── escalation/
+│   ├── cli/
+│   ├── audit/
+│   └── reference_agent/
 ├── policies/
 ├── tests/
 └── docs/
-```
 
 ---
 
 ## 13. Configuration Model
 
+### 13.1 Policy Files
+
+Policies are defined in YAML:
+
+* Allowed actions
+* Forbidden actions
+* Tool transitions
+* Escalation mode
+
 ### 13.1 Runtime Configuration
 
-* Enforcement mode
-* Audit logging
+Controls:
+
+* Enforcement mode (disabled / observe / enforce)
+* Audit logging / logging behavior
+* Policy Paths
 * Multi-tenant mode (optional)
+
+### 13.1 Multi-Tenant Mode
+
+Multi-tenant isolation:
+
+* Optional
+* Explicitly configured
+* Enforced at token, intent, plan, and runtime levels
 
 ---
 
