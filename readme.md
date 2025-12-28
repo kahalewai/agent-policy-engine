@@ -1,15 +1,14 @@
-<p align="center">
-▁ ▂ ▄ ▅ ▆ ▇ █ Agent Policy Engine █ ▇ ▆ ▅ ▄ ▂ ▁
-</p>
-<p align="center">
-**A deterministic, capability-based security runtime for agentic systems.**
-</p>
+<div align="center">
+
+# ▁ ▂ ▄ ▅ ▆ ▇ █  Agent Policy Engine  █ ▇ ▆ ▅ ▄ ▂ ▁
+
+**A deterministic, capability-based security runtime for agentic systems**
+
+</div>
 <br>
 
-APE is an open-source policy enforcement engine designed to make **AI agents safe to run in real production environments**.
 
-It does not rely on model alignment, prompt tricks, or “best effort” guardrails.
-Instead, APE enforces **hard security boundaries** between *reasoning* and *action*.
+Agent Policy Engine (APE) is an open-source policy enforcement engine designed to make **AI agents safe to run in real production environments**. APE does not rely on model alignment, prompt tricks, or “best effort” guardrails. Instead, APE enforces **hard security boundaries** between *reasoning* and *action*. APE functions as a policy enforcement point (PEP) for your agentic workflows.
 
 ---
 
@@ -33,7 +32,7 @@ Without a proper security architecture, agentic systems are vulnerable to:
 * Silent policy bypass
 * Unbounded or unintended actions
 
-APE exists to solve this problem **correctly**.
+APE exists to solve this problem **deterministically**.
 
 ---
 
@@ -381,12 +380,15 @@ If you are building agentic systems for real-world use,
 APE gives you the enforcement layer that LLMs fundamentally lack.
 
 ---
-
-
-
-
-
-
+<br>
+<br>
+<p align="center">
+▁ ▂ ▄ ▅ ▆ ▇ █   Built with Aloha by Kahalewai - 2025  █ ▇ ▆ ▅ ▄ ▂ ▁
+</p>
+<br>
+<br>
+<br>
+<br>
 
 
 
