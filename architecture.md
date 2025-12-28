@@ -3,8 +3,10 @@
 **Software Architecture & Implementation Specification
 (Normative, Codegen-Ready, Security-Enforced)**
 
-**Version:** 1.1
+**Version:** 1.0
+
 **Status:** Normative
+
 **Audience:** Security engineers, platform architects, AI system developers, code generators
 
 ---
