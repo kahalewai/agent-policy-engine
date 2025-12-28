@@ -1,6 +1,9 @@
+<p align="center">
 ▁ ▂ ▄ ▅ ▆ ▇ █ Agent Policy Engine █ ▇ ▆ ▅ ▄ ▂ ▁
 
 **A deterministic, capability-based security runtime for agentic systems.**
+</p>
+
 
 APE is an open-source policy enforcement engine designed to make **AI agents safe to run in real production environments**.
 
