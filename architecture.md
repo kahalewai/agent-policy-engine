@@ -376,6 +376,16 @@ Policies are:
 * Loaded at runtime
 * Immutable during execution
 
+### 5.7 Required Invariants
+
+Add explicit invariants, including:
+
+* No authority without intent + plan binding
+* No authority reuse
+* No execution without EXECUTING state
+* No authority issuance during ESCALATION_REQUIRED
+* No EXTERNAL_UNTRUSTED provenance in authority paths
+
 ---
 
 ## 6. High-Level Component Architecture
@@ -506,6 +516,16 @@ Purpose:
   * Machine-checkable invariants
   * Independent security review
 
+Explicit verification model schema
+
+Required exported fields:
+
+  * ACTIONS
+  * ALLOW
+  * DENY
+  * ESCALATE
+  * INVARIANTS
+
 ---
 
 ## 8. Runtime State Machine
@@ -570,6 +590,8 @@ Typed, deterministic errors:
 * `UnauthorizedActionError`
 * `RuntimeStateError`
 * `ProvenanceError`
+* `VerificationError`
+* `PlanMutationError` (or PlanError subtype)
 
 Errors are:
 
@@ -669,6 +691,15 @@ CLI guarantees:
 * Deterministic exit codes
 * Typed error output
 * Read-only safety (no authority issuance)
+
+`verify-policy` output compatibility with:
+
+* TLA+
+* Alloy
+* Z3
+* Dafny
+
+State that exported models are machine-consumable and deterministic.
 
 CLI command is 'ape'
 CLI is read-only and cannot issue authority.
