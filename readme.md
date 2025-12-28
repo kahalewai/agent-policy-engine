@@ -1,4 +1,4 @@
-# Agent Policy Engine (APE)
+▁ ▂ ▄ ▅ ▆ ▇ █ Agent Policy Engine █ ▇ ▆ ▅ ▄ ▂ ▁
 
 **A deterministic, capability-based security runtime for agentic systems.**
 
