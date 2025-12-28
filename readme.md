@@ -5,7 +5,6 @@
 **A deterministic, capability-based security runtime for agentic systems.**
 </p>
 <br>
-<br>
 
 APE is an open-source policy enforcement engine designed to make **AI agents safe to run in real production environments**.
 
