@@ -10,6 +10,8 @@ consider passing the architecture document, code, or both through Claude before 
 
 the escalation part of the solution is not done yet - decide if this is done before release or release now and fix later
 
+review discovery_escalation to see what is going on with this
+
 the policies are still too hard to write and understand - review discovery_policy file to understand
 
 maybe good idea to include in the CLI a way to scan existing agent code and recommend or generate policy YAML files
