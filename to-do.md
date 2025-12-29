@@ -2,8 +2,6 @@ The code is now complete, to match the architecture document
 
 Need to go through temp.md to move the code into the correct structure
 
-this could be a soft launch (as-is)
-
 but you need to finish some things first
 
 you need to update the readme, clean it up into a single version
@@ -18,7 +16,7 @@ also consider doing the threat model and OWASP mappings again with the finalized
 
 consider passing the architecture document, code, or both through Claude before release, double check
 
-
+the multi tenancy might not work, need to double check
 
 the escalation part of the solution is not done yet - decide if this is done before release or release now and fix later
 
