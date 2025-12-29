@@ -6,7 +6,11 @@ this could be a soft launch (as-is)
 
 if you do launch, make sure to properly secure the github repo
 
+also consider doing the threat model and OWASP mappings again with the finalized document and code
+
 consider passing the architecture document, code, or both through Claude before release, double check
+
+
 
 the escalation part of the solution is not done yet - decide if this is done before release or release now and fix later
 
