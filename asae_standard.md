@@ -495,5 +495,3 @@ It is a **foundational execution standard**, analogous to:
 > **Authority-Separated Agent Execution (ASAE)** is the standard by which AI agents are allowed to act only when explicitly authorized by deterministic, revocable, single-use capabilities, enforced by a runtime state machine and independent of probabilistic reasoning systems.
 
 ---
-
-Just tell me.
