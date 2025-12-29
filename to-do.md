@@ -4,6 +4,8 @@ Need to go through temp.md to move the code into the correct structure
 
 this could be a soft launch (as-is)
 
+if you do launch, make sure to properly secure the github repo
+
 consider passing the architecture document, code, or both through Claude before release, double check
 
 the escalation part of the solution is not done yet - decide if this is done before release or release now and fix later
