@@ -4,6 +4,14 @@ Need to go through temp.md to move the code into the correct structure
 
 this could be a soft launch (as-is)
 
+but you need to finish some things first
+
+you need to update the readme, clean it up into a single version
+
+consider breaking it out, intro, implementation, etc
+
+for the implementation, review discovery_implementation.md to see why this needs to be documented (make it easier for people to understand how to implement)
+
 if you do launch, make sure to properly secure the github repo
 
 also consider doing the threat model and OWASP mappings again with the finalized document and code
