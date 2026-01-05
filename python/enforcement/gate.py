@@ -1,14 +1,12 @@
 """
 APE Enforcement Gate
 
-Per architecture spec (§7.7 Enforcement Gate):
 - Intercepts all tool calls
 - Requires valid AuthorityToken
 - Executes or blocks
 - Emits audit events or logs
 - Failure behavior: block execution
 
-Per architecture spec (§5.5.5 Mandatory Enforcement Contract):
 - No tool execution may occur without a valid AuthorityToken
 - The Enforcement Gate must require an AuthorityToken for every tool invocation
 - Must validate token authenticity
