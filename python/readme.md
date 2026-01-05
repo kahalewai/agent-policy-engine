@@ -4,7 +4,7 @@
 
 This guide explains how to install, configure, integrate, and troubleshoot the Agent Policy Engine (APE) in your AI agent applications.
 
----
+<br>
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@ This guide explains how to install, configure, integrate, and troubleshoot the A
 9. [Security Checklist](#security-checklist)
 10. [API Reference](#api-reference)
 
----
+<br>
 
 ## Installation
 
@@ -29,17 +29,11 @@ This guide explains how to install, configure, integrate, and troubleshoot the A
 - No external services required
 - No network dependencies at runtime
 
-### Install from PyPI
-
-```bash
-pip install agent-policy-engine
-```
-
 ### Install from Source
 
 ```bash
-git clone https://github.com/agent-policy-engine/ape.git
-cd ape
+git clone https://github.com/kahalewai/agent-policy-engine/python.git
+cd python
 pip install -e .
 ```
 
@@ -59,7 +53,7 @@ ape --version
 ape validate policies/minimal_safe.yaml
 ```
 
----
+<br>
 
 ## Core Concepts
 
@@ -97,6 +91,9 @@ Tool Execution
 | **Immutable Plans** | Plans cannot be modified after approval |
 | **Provenance Tracking** | All data is labeled with trust level |
 
+
+<br>
+
 ### Runtime States
 
 ```
@@ -107,7 +104,7 @@ INITIALIZED → INTENT_SET → PLAN_APPROVED → EXECUTING → TERMINATED
                                     EXECUTING or TERMINATED
 ```
 
----
+<br>
 
 ## Quick Start
 
@@ -239,7 +236,7 @@ for idx, step in enumerate(plan_manager.plan):
 runtime.transition(RuntimeState.TERMINATED)
 ```
 
----
+<br>
 
 ## Policy Configuration
 
@@ -260,12 +257,16 @@ tool_transitions: {}     # Allowed tool sequences
 metadata: {}             # Custom metadata
 ```
 
+<br>
+
 ### Policy Evaluation Precedence
 
 1. **forbidden_actions** → DENY (highest priority)
 2. **escalation_required** → ESCALATE
 3. **allowed_actions** → ALLOW
 4. **default_deny** → DENY (if true) or ALLOW (if false)
+
+<br>
 
 ### Example Policies
 
@@ -308,7 +309,7 @@ forbidden_actions:
   - insert_data
 ```
 
----
+<br>
 
 ## Integration Patterns
 
@@ -391,7 +392,7 @@ protected_tools = [
 agent = initialize_agent(protected_tools, llm)
 ```
 
----
+<br>
 
 ## CLI Reference
 
@@ -430,11 +431,13 @@ ape --version
 | 3 | Validation error |
 | 4 | File not found |
 
----
+<br>
 
 ## MCP Integration
 
-APE can scan MCP (Model Context Protocol) configurations and automatically generate matching policies.
+APE can scan MCP (Model Context Protocol) configurations and automatically generate matching policies. This allows you to easily create APE policies to match your MCP server configuration. 
+
+<br>
 
 ### Scan MCP Configuration
 
@@ -448,6 +451,7 @@ ape mcp-scan mcp_config.json
 # Show MCP tools
 ape mcp-info mcp_config.json
 ```
+<br>
 
 ### Programmatic Usage
 
@@ -467,11 +471,13 @@ with open("generated_policy.yaml", "w") as f:
     yaml.dump(policy_data, f)
 ```
 
----
+<br>
 
 ## Troubleshooting
 
 ### Common Errors
+
+<br>
 
 #### PolicyDenyError
 
@@ -482,6 +488,8 @@ PolicyDenyError: Action denied by policy
 **Cause**: The action is not in `allowed_actions` or is in `forbidden_actions`.
 
 **Solution**: Add the action to `allowed_actions` in your policy, or check if it's incorrectly forbidden.
+
+<br>
 
 #### EscalationRequiredError
 
@@ -494,6 +502,8 @@ EscalationRequiredError: Action requires escalation
 **Solution**: In v1.0, escalation must be handled by your application. Either:
 1. Remove from `escalation_required` and add to `allowed_actions`
 2. Implement escalation handling in your application
+
+<br>
 
 #### RuntimeStateError
 
@@ -509,6 +519,8 @@ runtime.transition(RuntimeState.INTENT_SET)    # After setting intent
 runtime.transition(RuntimeState.PLAN_APPROVED)  # After approving plan
 runtime.transition(RuntimeState.EXECUTING)      # Before executing
 ```
+
+<br>
 
 #### UnauthorizedActionError
 
@@ -528,6 +540,8 @@ token = authority.issue(
 result = enforcement.execute(token, tool, action, **params)
 ```
 
+<br>
+
 #### ProvenanceError
 
 ```
@@ -540,6 +554,8 @@ ProvenanceError: EXTERNAL_UNTRUSTED provenance cannot grant authority
 ```python
 intent_manager.set(data, Provenance.USER_TRUSTED)
 ```
+
+<br>
 
 ### Debug Mode
 
@@ -557,7 +573,7 @@ for event in audit.events:
     print(f"{event.event_type}: {event.to_json()}")
 ```
 
----
+<br>
 
 ## Security Checklist
 
@@ -571,6 +587,8 @@ Before deploying an agent using APE, verify:
 - [ ] No tool references exist in LLM prompts
 - [ ] Runtime state machine is enforced
 - [ ] All intent/plan data uses trusted provenance
+
+<br>
 
 ### Inline Enforcement Requirement
 
@@ -590,7 +608,7 @@ Before deploying an agent using APE, verify:
 - Enforcement that's optional
 - Authority tokens that are reused or serialized
 
----
+<br>
 
 ## API Reference
 
@@ -676,11 +694,11 @@ class EnforcementMode(Enum):
     ENFORCE = "enforce"
 ```
 
----
+<br>
 
 ## Version History
 
-### v1.0.0
+v1.0.0
 
 - Initial release
 - Core policy enforcement
@@ -691,23 +709,14 @@ class EnforcementMode(Enum):
 - 5 example policies
 - CLI tools
 
-### Future (v2.0+)
+Future (v2.0+)
 
 - Full escalation resolver implementation
 - Async escalation support
 - Risk-based escalation
 - Pre-approval capability leasing
 
----
+<br>
 
-## Support
 
-- **Documentation**: https://github.com/kahalewai/ape
-- **Issues**: https://github.com/kahalewai/ape/issues
-- **Security**: See SECURITY.md for vulnerability reporting
 
----
-
-*APE defines a new execution-security standard for AI agents:*
-
-> **Authority is explicit, finite, revocable, and never inferred.**
