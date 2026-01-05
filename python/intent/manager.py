@@ -1,7 +1,6 @@
 """
 APE Intent Manager
 
-Per architecture spec (§5.1 Intent and §7.2 Intent Manager):
 - Intent is a structured, machine-readable declaration of user intent
 - Intent defines: allowed actions, forbidden actions, escalation requirements, scope boundaries
 - Intent must be validated against mandatory JSON Schema
