@@ -1,0 +1,87 @@
+# APE Policy: Development Mode
+#
+# More permissive policy for development and testing environments.
+# NOT recommended for production use.
+#
+# Characteristics:
+# - Allows most operations
+# - Escalates dangerous operations
+# - Denies only truly destructive operations
+# - Default allow for unlisted actions (NOT for production!)
+
+name: development
+version: "1.0.0"
+description: >
+  Development policy with broad permissions.
+  FOR DEVELOPMENT ONLY - not for production use.
+
+# WARNING: default_deny is FALSE
+# This means unlisted actions are allowed
+# Use only in development environments
+default_deny: false
+
+# Common development actions explicitly allowed
+allowed_actions:
+  # File operations
+  - read_file
+  - write_file
+  - create_file
+  - update_file
+  - list_directory
+  - create_directory
+  - move_file
+  - copy_file
+  - rename_file
+  
+  # Code operations
+  - run_tests
+  - lint_code
+  - format_code
+  - compile_code
+  - build_project
+  
+  # Debug operations
+  - debug_print
+  - log_message
+  - inspect_variable
+  - trace_execution
+  
+  # Development tools
+  - execute_command
+  - run_script
+  - start_server
+  - restart_server
+  
+  # API testing
+  - fetch_url
+  - http_get
+  - http_post
+  - http_put
+  - http_delete
+
+# Still forbid truly dangerous operations
+forbidden_actions:
+  - rm_rf
+  - format_disk
+  - drop_database
+  - shutdown_system
+  - destroy_all_data
+  - recursive_delete_all
+
+# Some operations still require thought
+escalation_required:
+  - delete_file
+  - delete_directory
+  - drop_table
+  - deploy_production
+  - send_email
+  - publish_to_production
+
+metadata:
+  category: development
+  risk_level: high
+  warning: "NOT FOR PRODUCTION USE"
+  recommended_for:
+    - local_development
+    - testing
+    - ci_cd_pipelines
