@@ -1,7 +1,6 @@
 """
 APE Authority Manager
 
-Per architecture spec (§5.5 AuthorityToken and §7.6 Authority Manager):
 - AuthorityToken is a concrete, in-process runtime artifact
 - Represents permission to execute exactly one action
 - Properties: issued only by Authority Manager, cryptographically strong ID,
