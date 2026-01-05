@@ -1,7 +1,6 @@
 """
 APE Plan Manager
 
-Per architecture spec (§5.2 Plan and §7.3 Plan Manager):
 - A Plan is an explicit, ordered list of intended actions
 - Plan must be proposed by the agent
 - Plan must be validated against intent
