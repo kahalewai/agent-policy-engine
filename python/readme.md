@@ -717,6 +717,13 @@ Future (v2.0+)
 - Pre-approval capability leasing
 
 <br>
-
-
+<br>
+<br>
+<br>
+<br>
+<br>
+<p align="center">
+▁ ▂ ▄ ▅ ▆ ▇ █   Built with Aloha by Kahalewai - 2026  █ ▇ ▆ ▅ ▄ ▂ ▁
+</p>
+<br>
 
