@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ape.dev/schemas/plan.json",
+  "title": "APE Plan Schema",
+  "description": "Schema for APE Plan objects - explicit, ordered list of intended actions",
+  "type": "object",
+  "required": ["steps"],
+  "properties": {
+    "steps": {
+      "type": "array",
+      "description": "Ordered list of plan steps (actions to execute)",
+      "items": {
+        "type": "object",
+        "required": ["action_id", "tool_id"],
+        "properties": {
+          "action_id": {
+            "type": "string",
+            "description": "Stable identifier for the action",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+          },
+          "tool_id": {
+            "type": "string",
+            "description": "Identifier of the tool to invoke",
+            "minLength": 1
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Parameters for the tool invocation"
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of this step"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the plan"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata for the plan"
+    }
+  },
+  "additionalProperties": false
+}
