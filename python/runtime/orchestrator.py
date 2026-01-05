@@ -1,7 +1,6 @@
 """
 APE Runtime Orchestrator (Controller)
 
-Per architecture spec (§7.1 Runtime Controller):
 - Owns runtime state
 - Enforces legal transitions
 - Blocks illegal execution paths
