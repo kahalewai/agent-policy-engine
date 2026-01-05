@@ -1,7 +1,6 @@
 """
 APE Provenance Manager
 
-Per architecture spec (§5.4 Provenance and §7.4 Provenance Manager):
 - All data entering the agent is labeled with provenance metadata
 - Provenance categories: SYSTEM_TRUSTED, USER_TRUSTED, EXTERNAL_UNTRUSTED
 - Provenance is mandatory and immutable once assigned
