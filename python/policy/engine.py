@@ -1,7 +1,6 @@
 """
 APE Policy Engine
 
-Per architecture spec (§5.6 Policy and §7.5 Policy Engine):
 - A Policy is a deterministic rule set defining allowed/forbidden actions,
   tool transition rules, escalation requirements, and default-deny behavior
 - Policies are declarative, YAML-based, schema-validated, loaded at runtime,
