@@ -3,7 +3,6 @@ APE Runtime Configuration
 
 Controls enforcement mode, audit logging, and optional features.
 
-Per architecture spec (§13 Configuration Model):
 - Enforcement mode: disabled / observe / enforce
 - Audit logging behavior
 - Policy paths
