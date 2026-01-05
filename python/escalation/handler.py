@@ -1,7 +1,6 @@
 """
 APE Escalation Handler
 
-Per architecture spec (§7.8 Escalation Handler):
 - Is an integration hook only
 - Does not implement UI or approval logic
 - Must be provided by the host application
