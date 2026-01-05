@@ -1,7 +1,6 @@
 """
 APE Runtime State Machine
 
-Per architecture spec (§8 Runtime State Machine):
 - Valid states: INITIALIZED, INTENT_SET, PLAN_APPROVED, EXECUTING, ESCALATION_REQUIRED, TERMINATED
 - Illegal transitions are rejected as security violations
 - Execution requires EXECUTING state
