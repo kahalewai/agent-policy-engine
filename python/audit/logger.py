@@ -1,7 +1,6 @@
 """
 APE Audit Logger
 
-Per architecture spec (§7.9 Audit Logger and related sections):
 - Emits audit events
 - Logs execution attempts, successes, and failures
 - Supports structured logging
