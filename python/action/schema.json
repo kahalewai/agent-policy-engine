@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ape.dev/schemas/action.json",
+  "title": "APE Action Schema",
+  "description": "Schema for APE Action objects - the smallest unit of authority",
+  "type": "object",
+  "required": [
+    "action_id",
+    "tool_id",
+    "parameters",
+    "intent_version",
+    "plan_hash",
+    "plan_step_index"
+  ],
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "description": "Stable identifier for the action",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+    },
+    "tool_id": {
+      "type": "string",
+      "description": "Identifier of the tool to invoke",
+      "minLength": 1
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Schema-validated parameters for the tool"
+    },
+    "intent_version": {
+      "type": "string",
+      "description": "Hash binding to the intent version",
+      "minLength": 1
+    },
+    "plan_hash": {
+      "type": "string",
+      "description": "Hash binding to the plan",
+      "minLength": 1
+    },
+    "plan_step_index": {
+      "type": "integer",
+      "description": "Index of this action in the plan",
+      "minimum": 0
+    },
+    "intent_scope": {
+      "type": "string",
+      "description": "Optional scope reference from intent"
+    }
+  },
+  "additionalProperties": false
+}
