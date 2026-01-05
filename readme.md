@@ -334,7 +334,7 @@ The agent complies.
 * No authority token
 * ❌ Action blocked
 
----
+<br>
 
 ### Scenario 2: Confused Deputy
 
@@ -355,7 +355,7 @@ The agent deploys production.
 * User approval required
 * ❌ Execution blocked by default
 
----
+<br>
 
 ### Scenario 3: Cross-Tool Escalation
 
@@ -372,7 +372,7 @@ Implicit authority transfer.
 * Policy denies transition
 * ❌ Execution blocked
 
----
+<br>
 
 ### Scenario 4: Multi-Tenant Leakage
 
