@@ -37,9 +37,9 @@ dev = [
 ape = "ape.cli.main:main"
 
 [project.urls]
-Homepage = "https://github.com/agent-policy-engine/ape"
-Documentation = "https://github.com/agent-policy-engine/ape#readme"
-Repository = "https://github.com/agent-policy-engine/ape"
+Homepage = "https://github.com/kahalewai/agent-policy-engine"
+Documentation = "https://github.com/kahalewai/agent-policy-engine"
+Repository = "https://github.com/kahalewai/agent-policy-engine"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
