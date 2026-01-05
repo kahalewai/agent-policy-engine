@@ -1,7 +1,6 @@
 """
 APE Command Line Interface
 
-Per architecture spec (§14 CLI):
 - Policy validation
 - Policy simulation
 - Attack test execution
