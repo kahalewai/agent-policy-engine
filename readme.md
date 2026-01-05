@@ -4,15 +4,18 @@
 
 **A deterministic, capability-based security runtime for agentic systems**
 ![ape5](https://github.com/user-attachments/assets/ba141cf5-0c13-4577-8b9f-ac4950aab286)
-
+<br>
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)](https://github.com/kahalewai/agent-policy-engine)
 
 </div>
 <br>
 
 
-APE is an open-source policy enforcement engine designed to make **AI agents safe to run in real production environments**. APE does not rely on model alignment, prompt tricks, or “best effort” guardrails. Instead, APE enforces **hard security boundaries** between *reasoning* and *action*. APE functions as a policy enforcement point (PEP) for your agentic workflows.
+APE is an open-source policy enforcement engine designed to make AI agents safe to run in real production environments. APE does not rely on model alignment, prompt tricks, or “best effort” guardrails. Instead, APE enforces hard security boundaries between reasoning and action. APE functions as a policy enforcement point (PEP) for your agentic workflows.
 
----
+<br>
 
 ## Why APE Exists
 
@@ -34,24 +37,24 @@ Without a proper security architecture, agentic systems are vulnerable to:
 * Silent policy bypass
 * Unbounded or unintended actions
 
-APE exists to solve this problem **deterministically**.
+APE exists to solve this problem deterministically.
 
----
+<br>
 
 ## What Problem APE Solves
 
 APE answers one core question:
 
-> **“How do we let an agent think freely, but act safely?”**
+> "How do we let an agent think freely, but act safely?"
 
 APE enforces the following guarantees:
 
-* An agent **cannot execute tools without explicit authority**
-* Authority is **finite, scoped, single-use, and revocable**
-* All actions are **bound to intent, plan, and policy**
-* Policies are **deterministic and default-deny**
-* External or untrusted data **cannot grant authority**
-* Execution is **auditable and formally analyzable**
+* An agent cannot execute tools without explicit authority
+* Authority is finite, scoped, single-use, and revocable
+* All actions are bound to intent, plan, and policy
+* Policies are deterministic and default-deny
+* External or untrusted data cannot grant authority
+* Execution is auditable and formally analyzable
 
 This makes APE suitable for:
 
@@ -61,20 +64,20 @@ This makes APE suitable for:
 * Regulated environments
 * Security-conscious applications
 
----
+<br>
 
 ## Core Design Principles
 
 APE is built on a few non-negotiable principles:
 
-* **Separation of thinking and power**
-* **Explicit authority, never implicit**
-* **Determinism over heuristics**
-* **Capability-based security**
-* **Fail closed, never open**
-* **Enforcement, not advice**
+* Separation of thinking and power
+* Explicit authority, never implicit
+* Determinism over heuristics
+* Capability-based security
+* Fail closed, never open
+* Enforcement, not advice
 
-APE does **not** try to:
+APE does not try to:
 
 * Align the model
 * Predict intent probabilistically
@@ -83,191 +86,199 @@ APE does **not** try to:
 
 It enforces rules at runtime.
 
----
+<br>
 
 ## How APE Works (Conceptual Overview)
 
 At a high level, APE introduces a strict lifecycle:
 
-1. **Intent is declared**
-2. **A plan is approved**
-3. **Policies are evaluated**
-4. **Authority is explicitly issued**
-5. **Tools are executed through enforcement**
-6. **Authority is consumed and revoked**
+1. Intent is declared
+2. A plan is approved
+3. Policies are evaluated
+4. Authority is explicitly issued
+5. Tools are executed through enforcement
+6. Authority is consumed and revoked
 
-An agent may *propose* actions, but **APE decides what is allowed**.
+An agent may propose actions, but APE decides what is allowed.
 
----
+<br>
 
 ## Installation
 
-APE is a Python package.
-
-### Requirements
-
-* Python 3.10 or newer
-
-### Install from source (recommended for now)
+install from source:
 
 ```bash
-git clone https://github.com/kahalewai/agent-policy-engine.git
-cd agent-policy-engine
+git clone https://github.com/kahalewai/agent-policy-engine/python.git
+cd python
 pip install -e .
 ```
 
-APE has minimal dependencies and is designed to be embedded into existing agent frameworks.
+## Quick Start
 
----
-
-## Basic Usage
-
-Below is a **minimal, end-to-end example** showing how APE is used in practice.
-
-This example demonstrates:
-
-* intent creation
-* plan approval
-* policy enforcement
-* secure tool execution
-
----
-
-### 1. Define a Policy
-
-Policies are deterministic and default-deny.
+### 1. Create a Policy
 
 ```yaml
-# policy.yaml
+# policies/my_policy.yaml
+name: my_first_policy
+version: "1.0.0"
+default_deny: true
+
 allowed_actions:
   - read_file
-  - write_file
+  - list_directory
 
 forbidden_actions:
-  - delete_database
+  - delete_file
+  - rm_rf
 
 escalation_required:
-  - send_email
+  - write_file
 ```
 
----
-
-### 2. Initialize Core Components
+### 2. Use APE in Your Agent
 
 ```python
-from ape.runtime.controller import RuntimeController
-from ape.runtime.orchestrator import RuntimeOrchestrator
-from ape.intent.manager import IntentManager
-from ape.plan.manager import PlanManager
-from ape.policy.engine import PolicyEngine
-from ape.authority.manager import AuthorityManager
-from ape.enforcement.gate import EnforcementGate
+from ape import PolicyEngine, RuntimeConfig, EnforcementMode
+
+# Load policy
+policy = PolicyEngine("policies/my_policy.yaml")
+
+# Check if an action is allowed
+result = policy.evaluate("read_file")
+print(result.decision)  # PolicyDecision.ALLOW
+
+result = policy.evaluate("delete_file")
+print(result.decision)  # PolicyDecision.DENY
 ```
 
-```python
-runtime = RuntimeController()
-intent_mgr = IntentManager()
-plan_mgr = PlanManager()
-policy = PolicyEngine("policy.yaml")
-authority = AuthorityManager(tenant="default")
+### 3. Full Agent Integration
 
-orchestrator = RuntimeOrchestrator(
-    runtime=runtime,
-    authority=authority,
-    plan=plan_mgr,
-    policy=policy,
+```python
+from ape import (
+    RuntimeOrchestrator,
+    IntentManager,
+    PlanManager,
+    PolicyEngine,
+    AuthorityManager,
+    EnforcementGate,
+    RuntimeConfig,
+    RuntimeState,
+    Action,
+    Provenance,
 )
 
-enforcement = EnforcementGate(authority)
+# Initialize components
+runtime = RuntimeOrchestrator()
+intent = IntentManager()
+plan = PlanManager(intent)
+policy = PolicyEngine("policies/my_policy.yaml")
+authority = AuthorityManager(runtime)
+config = RuntimeConfig()
+enforcement = EnforcementGate(authority, config)
+
+# Set intent (from user)
+intent.set({
+    "allowed_actions": ["read_file"],
+    "forbidden_actions": [],
+    "scope": "file_reading"
+}, Provenance.USER_TRUSTED)
+runtime.transition(RuntimeState.INTENT_SET)
+
+# Submit and approve plan
+plan.submit({
+    "steps": [
+        {"action_id": "read_file", "tool_id": "file_reader", "parameters": {"path": "data.txt"}}
+    ]
+}, Provenance.USER_TRUSTED)
+plan.approve()
+runtime.transition(RuntimeState.PLAN_APPROVED)
+
+# Execute
+runtime.transition(RuntimeState.EXECUTING)
+for idx, step in enumerate(plan.plan):
+    action = Action(
+        action_id=step.action_id,
+        tool_id=step.tool_id,
+        parameters=step.parameters,
+        intent_version=intent.version,
+        plan_hash=plan.hash,
+        plan_step_index=idx
+    )
+    
+    # Evaluate policy
+    policy.evaluate_or_raise(action.action_id)
+    
+    # Get authority token
+    token = authority.issue(
+        intent_version=intent.version,
+        plan_hash=plan.hash,
+        action=action
+    )
+    
+    # Execute through enforcement gate
+    result = enforcement.execute(token, my_tool, action, **action.parameters)
 ```
 
----
+<br>
 
-### 3. Set Intent (Structured, Validated, Trusted)
+## CLI Usage
 
-```python
-from ape.provenance.manager import Provenance
+```bash
+# Validate a policy
+ape validate policies/my_policy.yaml
 
-intent = {
-    "goal": "Update a configuration file safely"
-}
+# Simulate policy evaluation
+ape simulate policies/my_policy.yaml read_file
+ape simulate policies/my_policy.yaml delete_file
 
-intent_mgr.set_intent(intent, provenance=Provenance.USER_TRUSTED)
-orchestrator.on_intent_update()
+# Show policy information
+ape info policies/my_policy.yaml --json
+
+# Generate policy from MCP configuration
+ape mcp-scan mcp_config.json -o generated_policy.yaml
+
+# Show MCP configuration tools
+ape mcp-info mcp_config.json
 ```
 
-**Security gain:**
-Untrusted or external data cannot become authority.
+<br>
 
----
+## Example Policies
 
-### 4. Submit a Plan
+APE ships with 5 ready-to-use policies:
 
-```python
-plan = [
-    {"action_id": "read_file"},
-    {"action_id": "write_file"}
-]
+| Policy | Use Case | Risk Level |
+|--------|----------|------------|
+| `minimal_safe.yaml` | Starting point for most users | Low |
+| `read_only.yaml` | Data analysis, reporting | Minimal |
+| `filesystem_scoped.yaml` | Build agents, config management | Moderate |
+| `human_in_loop.yaml` | Enterprise, regulated environments | Controlled |
+| `development.yaml` | Development/testing only | High |
 
-plan_mgr.submit(plan, provenance=Provenance.USER_TRUSTED)
-```
+<br>
 
-**Security gain:**
-The agent is now constrained to a fixed, auditable plan.
-
----
-
-### 5. Execute the Plan Safely
-
-```python
-tools = {
-    "read_file": lambda: print("Reading file"),
-    "write_file": lambda: print("Writing file"),
-}
-
-from ape.reference_agent.agent import ReferenceAgent
-
-agent = ReferenceAgent(
-    orchestrator=orchestrator,
-    policy=policy,
-    authority=authority,
-    enforcement=enforcement,
-    escalation=None,
-)
-
-agent.run(
-    plan=plan_mgr.plan,
-    tools=tools,
-    intent_version=intent_mgr.version
-)
-```
-
-**What happens internally:**
-
-* Each action is policy-checked
-* Authority is issued per step
-* Tokens are single-use
-* Tool execution is impossible without a valid token
-
----
-
-## What Makes APE Secure
+## How does APE secure AI Agents?
 
 APE enforces security at **runtime**, not at prompt time.
 
 Specifically, it prevents:
 
 * Prompt injection attacks
+* Indirect Prompt Injection
 * Tool misuse and overreach
+* Cross-Tool Escalation
 * Hidden instructions in data
+* Confused Deputy Attacks
+* Instruction Smuggling
 * Authority replay
 * Privilege escalation
 * Accidental execution paths
 * Policy bypass via reasoning tricks
+* Runtime Confusion Attacks
 
-Even if the model is compromised, **APE still enforces the rules**.
+Even if the model is compromised, APE still enforces the rules.
 
----
+<br>
 
 ## Auditability and Verification
 
@@ -285,7 +296,7 @@ This makes it suitable for:
 * Formal verification
 * Post-incident analysis
 
----
+<br>
 
 ## Execution Model
 
@@ -298,235 +309,9 @@ APE currently operates in:
 * Short-lived authority
 * Maximum security
 
-Future execution modes (distributed, persistent) are intentionally **out of scope** for now and will be added later as opt-in extensions.
+Future execution modes (distributed, persistent) are intentionally out of scope for now and will be added later as opt-in extensions.
 
----
-
-## Why APE Is Open Source
-
-APE is open source because:
-
-* Security infrastructure must be inspectable
-* Enforcement logic should be reviewable
-* Trust should come from correctness, not obscurity
-* The agent ecosystem needs shared primitives, not closed silos
-
-Open sourcing APE allows:
-
-* Independent security review
-* Community contribution
-* Formal analysis
-* Adoption across frameworks
-
----
-
-## Project Goals
-
-The goal of APE is **not** to build another agent framework.
-
-The goal is to provide:
-
-* A **security substrate** for agents
-* A **reference architecture** for safe execution
-* A **shared enforcement layer** across ecosystems
-
-APE is designed to be embedded, reused, and extended.
-
----
-
-## Non-Goals
-
-APE does **not**:
-
-* Replace your agent framework
-* Handle model prompting
-* Manage distributed systems (yet)
-* Persist long-lived authority
-* Solve alignment at the model level
-
-It solves **authority and enforcement** — deliberately and correctly.
-
----
-
-## Contributing
-
-Contributions are welcome, especially in:
-
-* Security review
-* Documentation
-* Formal verification
-* Integration examples
-* Policy modeling tools
-
-Before contributing, please understand:
-
-* APE prioritizes correctness over convenience
-* Security invariants are non-negotiable
-* New features must preserve default safety
-
----
-
-## License
-
-APE is released under an open-source license (to be specified).
-
----
-
-## Final Note
-
-APE is built on a simple idea:
-
-> **Agents can reason freely — but power must be explicit.**
-
-If you are building agentic systems for real-world use,
-APE gives you the enforcement layer that LLMs fundamentally lack.
-
----
 <br>
-<br>
-<p align="center">
-▁ ▂ ▄ ▅ ▆ ▇ █   Built with Aloha by Kahalewai - 2025  █ ▇ ▆ ▅ ▄ ▂ ▁
-</p>
-<br>
-<br>
-<br>
-<br>
-
-
-
-
-
-
-
-
-# Agent Policy Engine (APE)
-
-**Deterministic authority enforcement for AI agents**
-
----
-
-### Why APE Exists
-
-Modern AI agents are powerful — and with that power comes risks.
-
-Today, agents can:
-
-* Read untrusted data
-* Call tools
-* Execute actions
-* Chain reasoning across systems
-
-But **authority is often implicit**, inferred from language, prompts, or model behavior.
-
-This creates serious security risks:
-
-* Indirect prompt injection
-* Confused deputy attacks
-* Cross-tool privilege escalation
-* Instruction smuggling via data
-* Accidental or silent authority expansion
-
-**Reasoning is probabilistic. Authority must be deterministic.**
-
-APE exists to enforce that boundary.
-
----
-
-## What Is APE?
-
-The **Agent Policy Engine (APE)** is a **library-first, in-process security runtime** that enforces *what an agent is allowed to do*, independently of what it *wants* to do.
-
-APE sits **between reasoning and execution** and enforces:
-
-* Explicit user intent
-* Immutable execution plans
-* Deterministic policies
-* Single-use authority tokens
-* Mandatory enforcement gates
-* Default-deny behavior
-
-APE does **not**:
-
-* Interpret natural language
-* Modify prompts
-* Control model internals
-* Enforce ethics or values
-
-APE enforces **authority, not cognition**.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----
-
-## Where APE Fits
-
-```
-User Input
-   ↓
-Intent Construction
-   ↓
-🛡 Agent Policy Engine (APE)
-   ↓
-LLM Reasoning
-   ↓
-🛡 APE Enforcement Gate
-   ↓
-Tool Execution
-```
-
-APE is:
-
-* In-process
-* Synchronous
-* Deterministic
-* Multi-tenant safe
-* Fully auditable
-
----
-
-### How Developers Use APE
-
-APE is a **library**, not a service.
-
-Developers:
-
-1. Define policies (YAML)
-2. Declare user intent (structured data)
-3. Submit execution plans
-4. Route *all* tool execution through APE
-
-APE enforces the rest.
-
----
-
-## Core Security Guarantees
-
-| Guarantee                     | Description                                            |
-| ----------------------------- | ------------------------------------------------------ |
-| **Explicit Intent**           | Agents may only operate within machine-readable intent |
-| **Immutable Plans**           | Execution plans cannot mutate silently                 |
-| **Default Deny**              | Anything not explicitly allowed is blocked             |
-| **Authority Tokens**          | Every action requires a single-use token               |
-| **No Token, No Execution**    | Tool calls without tokens are rejected                 |
-| **Tenant Isolation**          | No cross-tenant authority leakage                      |
-| **Schema Enforcement**        | Invalid inputs fail fast                               |
-| **Formal Verification Hooks** | Policies are analyzable by model checkers              |
-
----
 
 
 ## Real-World Attack Scenarios (and How APE Stops Them)
@@ -600,220 +385,83 @@ A token from Tenant A is reused in Tenant B.
 * Tenant mismatch = hard failure
 * ❌ Security violation prevented
 
----
+<br>
 
-## Installation
+## Why APE Is Open Source
 
-### From Console
+APE is open source because:
 
-```bash
-pip install agent-policy-engine
-```
+* Security infrastructure must be inspectable
+* Enforcement logic should be reviewable
+* Trust should come from correctness, not obscurity
+* The agent ecosystem needs shared primitives, not closed silos
 
-### From Source
+Open sourcing APE allows:
 
-```bash
-git clone https://github.com/kahalewai/agent-policy-engine
-cd agent-policy-engine
-pip install -e .
-```
+* Independent security review
+* Community contribution
+* Formal analysis
+* Adoption across frameworks
 
----
+<br>
 
-## Quick Start
+## Project Goals for APE
 
-### 1️⃣ Define a Policy (YAML)
+The goal of APE is not to build another agent framework.
 
-```yaml
-allowed_actions:
-  - read_file
-  - write_file
+The goal is to provide:
 
-forbidden_actions:
-  - delete_file
+* A security substrate for agents
+* A reference architecture for safe execution
+* A shared enforcement layer across ecosystems
 
-escalation_required:
-  - deploy_production
-```
+APE is designed to be embedded, reused, and extended.
 
----
+<br>
 
-### 2️⃣ Create an Intent
+## Non-Goals
 
-```python
-intent = {
-    "allowed_actions": ["read_file", "write_file"],
-    "forbidden_actions": ["delete_file"],
-    "scope": "local_fs"
-}
-```
+APE does not:
 
-APE validates this against a JSON Schema and rejects malformed intent.
+* Replace your agent framework
+* Handle model prompting
+* Manage distributed systems (yet)
+* Persist long-lived authority
+* Solve alignment at the model level
 
----
+It solves authority and enforcement - deliberately and correctly.
 
-### 3️⃣ Submit a Plan
+<br>
 
-```python
-plan = [
-    {"action_id": "read_file"},
-    {"action_id": "write_file"}
-]
-```
+## License
 
-Plans are:
+APE is released under Apache 2.0
 
-* Linear
-* Immutable
-* Validated against intent
+<br>
 
----
+## Contributing
 
-### 4️⃣ Execute Actions (Correctly)
+Contributions are welcome, especially in:
 
-```python
-agent = ReferenceAgent(
-    tenant_id="tenant_a",
-    policy_path="policies/example_policy.yaml"
-)
+* Security review
+* Documentation
+* Formal verification
+* Integration examples
+* Policy modeling tools
 
-agent.run(intent, plan, tool_map={
-    "read_file": read_file_tool,
-    "write_file": write_file_tool
-})
-```
+Before contributing, please understand:
 
-Behind the scenes:
-
-* Policy is evaluated
-* AuthorityToken is issued
-* Enforcement Gate validates token
-* Token is consumed exactly once
-
----
-
-## CLI Tooling
-
-### Validate a Policy
-
-```bash
-ape validate-policy policies/example_policy.yaml
-```
-
-### Simulate a Policy Decision
-
-```bash
-ape simulate policies/example_policy.yaml delete_file
-# → DENY
-```
-
-### Export for Formal Verification
-
-```bash
-ape verify-policy policies/example_policy.yaml > model.json
-```
-
-Feed `model.json` into:
-
-* TLA+
-* Alloy
-* Z3
-* Dafny
-
----
-
-## Formal Verification (Optional but Powerful)
-
-APE policies can be exported into a **verification-friendly model**.
-
-This enables proofs of invariants like:
-
-> “No forbidden action can ever receive an AuthorityToken.”
-
-APE is designed to be **analyzable, not opaque**.
-
----
-
-## Multi-Tenant Safety
-
-APE enforces **hard tenant isolation**:
-
-* Intent
-* Plans
-* Runtime state
-* Authority tokens
-
-All are tenant-bound and checked at runtime.
-
-Cross-tenant access is treated as a **security violation**, not a bug.
-
----
-
-## Testing Philosophy
-
-APE ships with:
-
-* Unit tests
-* Integration tests
-* Threat simulations
-* End-to-end enforcement tests
-
-Security-relevant code paths **must be tested**.
-
----
-
-## Open Source & Governance
-
-* **License**: Apache 2.0
-* **Security**: Coordinated disclosure via `SECURITY.md`
-* **Contributions**: Determinism and safety required
-* **Design Principle**: Enforcement over guidance
-
----
-
-## Philosophy
-
-> **Agents should be powerful, but never implicit.**
-
-APE restores the boundary between:
-
-* What an agent *thinks*
-* And what an agent is *allowed to do*
-
-This boundary is **non-negotiable**.
-
----
-
-## Final Note
-
-If you are building:
-
-* Autonomous agents
-* Tool-using LLMs
-* Enterprise copilots
-* Multi-tenant AI platforms
-
-**You need an authority layer.**
-
-APE is that layer.
-
----
-
-## Contribution
-
-APE is an open-source project. Everyone is welcome to contribute:
-
-* Bug reports & security edge cases
-* Policy rule enhancements
-* Framework adapters
-* Test cases and attack simulations
-* Documentation and tutorials
-
----
-
-## Vision
-
-APE aims to become a **shared, open standard** for safe AI agent orchestration, providing developers and organizations with a practical, enforceable way to secure AI interactions today.
-
-> "Separating reasoning from authority is the key to safe agent deployment."
-
+* APE prioritizes correctness over convenience
+* Security invariants are non-negotiable
+* New features must preserve default safety
+  
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<p align="center">
+▁ ▂ ▄ ▅ ▆ ▇ █   Built with Aloha by Kahalewai - 2026  █ ▇ ▆ ▅ ▄ ▂ ▁
+</p>
+<br>
