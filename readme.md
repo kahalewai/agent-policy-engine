@@ -28,6 +28,8 @@ Modern AI agents can:
 
 But **LLMs cannot be trusted with authority**.
 
+<br>
+
 Without a proper security architecture, agentic systems are vulnerable to:
 
 * Prompt injection
@@ -103,7 +105,7 @@ An agent may propose actions, but APE decides what is allowed.
 
 <br>
 
-## Installation
+## Installing and using APE
 
 install from source:
 
@@ -113,9 +115,11 @@ cd python
 pip install -e .
 ```
 
-## Quick Start
+<br>
 
-### 1. Create a Policy
+### Implementation Overview
+
+#### 1. Create a Policy
 
 ```yaml
 # policies/my_policy.yaml
@@ -135,7 +139,7 @@ escalation_required:
   - write_file
 ```
 
-### 2. Use APE in Your Agent
+#### 2. Use APE in Your Agent
 
 ```python
 from ape import PolicyEngine, RuntimeConfig, EnforcementMode
@@ -151,7 +155,7 @@ result = policy.evaluate("delete_file")
 print(result.decision)  # PolicyDecision.DENY
 ```
 
-### 3. Full Agent Integration
+#### 3. Full Agent Integration
 
 ```python
 from ape import (
@@ -221,6 +225,12 @@ for idx, step in enumerate(plan.plan):
 
 <br>
 
+### Full Detailed Implementation
+For full and detailed instructions on how to install and use APE, please read the Implementation Guide
+* https://github.com/kahalewai/agent-policy-engine/tree/main/python
+
+<br>
+
 ## CLI Usage
 
 ```bash
@@ -243,9 +253,9 @@ ape mcp-info mcp_config.json
 
 <br>
 
-## Example Policies
+## Default / Example Policies
 
-APE ships with 5 ready-to-use policies:
+APE ships with 5 ready-to-use default or example policies:
 
 | Policy | Use Case | Risk Level |
 |--------|----------|------------|
@@ -255,17 +265,24 @@ APE ships with 5 ready-to-use policies:
 | `human_in_loop.yaml` | Enterprise, regulated environments | Controlled |
 | `development.yaml` | Development/testing only | High |
 
-Policies can be found here: https://github.com/kahalewai/agent-policy-engine/tree/main/policies
+* Example Policies can be found here: https://github.com/kahalewai/agent-policy-engine/tree/main/policies
+* APE also includes a helper tool to scan your MCP Server to auto generate APE Policy based on MCP config
+* To read more about using the MCP scanner (recommended approach), check the Implementation Guide:
+* https://github.com/kahalewai/agent-policy-engine/tree/main/python
 
 
 <br>
 
 ## How does APE secure AI Agents?
 
-APE enforces security at **runtime**, not at prompt time.
+APE operates:
+* In-process
+* In-memory
+* Short-lived authority
 
-Specifically, it prevents:
+<br>
 
+APE enforces security at **runtime**, not at prompt time. APE prevents:
 * Prompt injection attacks
 * Indirect Prompt Injection
 * Tool misuse and overreach
@@ -279,43 +296,12 @@ Specifically, it prevents:
 * Policy bypass via reasoning tricks
 * Runtime Confusion Attacks
 
-Even if the model is compromised, APE still enforces the rules.
-
 <br>
 
-## Auditability and Verification
-
-APE provides:
-
-* Mandatory audit logging
-* Explicit authority issuance records
-* Deterministic policy evaluation
-* Exportable verification models
-
-This makes it suitable for:
-
-* Security reviews
-* Compliance environments
-* Formal verification
-* Post-incident analysis
+* Mapping of OWASP Top 10 LLM Risks https://github.com/kahalewai/agent-policy-engine/blob/main/owasp-mapping.md
+* Threat Model for APE: https://github.com/kahalewai/agent-policy-engine/blob/main/threat-model.md
 
 <br>
-
-## Execution Model
-
-APE currently operates in:
-
-**Local Ephemeral Mode (Default)**
-
-* In-process
-* In-memory
-* Short-lived authority
-* Maximum security
-
-Future execution modes (distributed, persistent) are intentionally out of scope for now and will be added later as opt-in extensions.
-
-<br>
-
 
 ## Real-World Attack Scenarios (and How APE Stops Them)
 
@@ -387,6 +373,24 @@ A token from Tenant A is reused in Tenant B.
 * Tokens are tenant-bound
 * Tenant mismatch = hard failure
 * ❌ Security violation prevented
+
+<br>
+
+## Auditability and Verification
+
+APE provides:
+
+* Mandatory audit logging
+* Explicit authority issuance records
+* Deterministic policy evaluation
+* Exportable verification models
+
+This makes it suitable for:
+
+* Security reviews
+* Compliance environments
+* Formal verification
+* Post-incident analysis
 
 <br>
 
