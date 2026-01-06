@@ -255,6 +255,9 @@ APE ships with 5 ready-to-use policies:
 | `human_in_loop.yaml` | Enterprise, regulated environments | Controlled |
 | `development.yaml` | Development/testing only | High |
 
+Policies can be found here: https://github.com/kahalewai/agent-policy-engine/tree/main/policies
+
+
 <br>
 
 ## How does APE secure AI Agents?
