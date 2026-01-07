@@ -298,7 +298,7 @@ APE enforces security at **runtime**, not at prompt time. APE prevents:
 
 <br>
 
-* Mapping of OWASP Top 10 LLM Risks https://github.com/kahalewai/agent-policy-engine/blob/main/owasp-mapping.md
+* OWASP Top 10 LLM Risks https://github.com/kahalewai/agent-policy-engine/blob/main/owasp-mapping.md
 * Threat Model for APE: https://github.com/kahalewai/agent-policy-engine/blob/main/threat-model.md
 
 <br>
@@ -423,6 +423,10 @@ The goal is to provide:
 * A shared enforcement layer across ecosystems
 
 APE is designed to be embedded, reused, and extended.
+
+* APE is intended to be included in other frameworks and solutions.
+* APE acts as a Policy Enforcement Point (PEP) in any solution.
+* Programmatic correlation of APE policy to MCP config can make APE hands off and effective.
 
 <br>
 
