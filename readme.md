@@ -424,8 +424,8 @@ The goal is to provide:
 
 APE is designed to be embedded, reused, and extended.
 
-* APE is intended to be included in other frameworks and solutions.
-* APE acts as a Policy Enforcement Point (PEP) in any solution.
+* APE is intended to be a security foundation / building block for other frameworks and solutions.
+* APE acts as a Policy Enforcement Point (PEP) in any agentic solution, achieving Zero Trust Alignment.
 * Programmatic correlation of APE policy to MCP config can make APE hands off and effective.
 
 <br>
