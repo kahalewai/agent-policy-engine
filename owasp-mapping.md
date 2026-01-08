@@ -18,7 +18,7 @@ Untrusted input manipulates the model into executing unintended actions.
 **Why This Matters**
 Prompt injection becomes **non-fatal** when language cannot grant authority.
 
----
+<br>
 
 ### **LLM02: Insecure Output Handling**
 
@@ -34,7 +34,7 @@ LLM outputs are trusted blindly and fed into tools or systems.
 * AuthorityTokens required for execution
 * Schema validation prevents malformed actions
 
----
+<br>
 
 ### **LLM03: Training Data Poisoning**
 
@@ -51,7 +51,7 @@ Model behavior influenced by poisoned training data.
 **Net Effect**
 Even if the model is poisoned, **damage is contained**.
 
----
+<br>
 
 ### **LLM04: Model Denial of Service**
 
@@ -65,7 +65,7 @@ Excessive or malicious usage exhausts model resources.
 * Not a rate-limiting or infra tool
 * Should be handled at platform level
 
----
+<br>
 
 ### **LLM05: Supply Chain Vulnerabilities**
 
@@ -80,7 +80,7 @@ Compromised dependencies or tools return malicious data.
 * Data cannot expand authority
 * Tool calls still require explicit authorization
 
----
+<br>
 
 ### **LLM06: Sensitive Information Disclosure**
 
@@ -98,7 +98,7 @@ Agents leak secrets or sensitive data.
 **Note**
 APE enforces *authority*, not data classification.
 
----
+<br>
 
 ### **LLM07: Insecure Plugin / Tool Design**
 
@@ -114,7 +114,7 @@ Tools/plugins expose dangerous capabilities.
 * Policy restricts tool usage
 * Immutable plans prevent hidden calls
 
----
+<br>
 
 ### **LLM08: Excessive Agency**
 
@@ -132,7 +132,7 @@ Agents act beyond intended autonomy.
 
 **This is one of APE’s primary design goals.**
 
----
+<br>
 
 ### **LLM09: Overreliance on LLMs**
 
@@ -147,7 +147,7 @@ Critical decisions delegated entirely to models.
 * Enforcement is deterministic
 * Model decisions are advisory only
 
----
+<br>
 
 ### **LLM10: Improper Access Control**
 
@@ -163,7 +163,7 @@ LLMs lack traditional access control enforcement.
 * Tenant isolation
 * Mandatory execution gates
 
----
+<br>
 
 ### ✅ Summary — OWASP LLM Top 10
 
@@ -180,7 +180,7 @@ LLMs lack traditional access control enforcement.
 | LLM09 Overreliance     | ⚠️ Partial     |
 | LLM10 Access Control   | ✅ Strong       |
 
----
+<br>
 
 > **APE does not try to solve every security problem.**
 > It solves the *agent-specific* ones that traditional security models miss.
