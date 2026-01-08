@@ -17,7 +17,7 @@ APE is responsible for ensuring:
 
 > **No action with real-world effect can occur without explicit, deterministic authorization.**
 
----
+<br>
 
 ### 1.2 Assets Protected
 
@@ -32,7 +32,7 @@ APE protects the following critical assets:
 | Policy Integrity | Deterministic enforcement rules         |
 | Audit Trail      | Evidence of enforcement decisions       |
 
----
+<br>
 
 ### 1.3 Trust Boundaries
 
@@ -44,7 +44,7 @@ APE enforces explicit trust boundaries between:
 * **Tool execution** (high-impact, gated)
 * **Tenants** (hard isolation)
 
----
+<br>
 
 ## 2. Threat Actors
 
@@ -56,11 +56,11 @@ APE enforces explicit trust boundaries between:
 | Buggy Agent Logic      | Accidental authority escalation                   |
 | Cross-Tenant Adversary | Attempts to reuse authority across tenants        |
 
----
+<br>
 
 ## 3. Threat Categories & Scenarios
 
----
+<br>
 
 ## Threat 1: Indirect Prompt Injection
 
@@ -92,7 +92,7 @@ Untrusted external content (documents, web pages, emails) contains embedded inst
 Low.
 Requires explicit developer misuse (bypassing APE).
 
----
+<br>
 
 ## Threat 2: Confused Deputy Attacks
 
@@ -125,7 +125,7 @@ The document instructs the agent to deploy infrastructure.
 Low.
 Escalation requires explicit approval.
 
----
+<br>
 
 ## Threat 3: Cross-Tool Privilege Escalation
 
@@ -156,7 +156,7 @@ Read from database → deploy service → modify infra.
 Very low.
 Requires policy misconfiguration.
 
----
+<br>
 
 ## Threat 4: Instruction Smuggling via Natural Language
 
@@ -185,7 +185,7 @@ Operational commands embedded in seemingly benign natural language.
 
 Very low.
 
----
+<br>
 
 ## Threat 5: Authority Token Reuse (Replay)
 
@@ -210,7 +210,7 @@ An attacker attempts to reuse an authorization artifact to perform additional ac
 
 Negligible.
 
----
+<br>
 
 ## Threat 6: Cross-Tenant Authority Leakage
 
@@ -236,7 +236,7 @@ Authority artifacts issued in one tenant are used in another.
 
 Negligible.
 
----
+<br>
 
 ## Threat 7: Plan Mutation After Approval
 
@@ -261,7 +261,7 @@ An agent alters its execution plan after receiving approval.
 
 Negligible.
 
----
+<br>
 
 ## Threat 8: Policy Ambiguity or Conflicts
 
@@ -286,7 +286,7 @@ Overlapping or unclear policies result in unintended permissions.
 
 Low.
 
----
+<br>
 
 ## Threat 9: Bypassing Enforcement Gate
 
@@ -311,7 +311,7 @@ Developer or agent attempts to invoke tools directly.
 Medium if developers bypass APE intentionally.
 This is a **developer responsibility risk**, not a design flaw.
 
----
+<br>
 
 ## Threat 10: Non-Deterministic Enforcement
 
@@ -336,11 +336,11 @@ LLM behavior causes inconsistent authorization decisions.
 
 Negligible.
 
----
+<br>
 
-## 4. Formal Security Invariants
+## 4. Formal Security Requirements
 
-APE enforces the following invariants:
+APE enforces the following requirements:
 
 1. **No Action Without AuthorityToken**
 2. **No Token Without Policy Allowance**
@@ -349,13 +349,13 @@ APE enforces the following invariants:
 5. **No Plan Mutation After Approval**
 6. **No Authority Derived from Data**
 
-These invariants are:
+These requirements are:
 
 * Enforced in code
 * Testable
 * Exportable for formal verification
 
----
+<br>
 
 ## 5. Out-of-Scope Threats
 
@@ -371,7 +371,7 @@ APE assumes:
 
 > If an action is allowed, the tool itself must still be secure.
 
----
+<br>
 
 ## 6. Summary
 
