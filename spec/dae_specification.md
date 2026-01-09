@@ -509,7 +509,7 @@ This spec is **v1.0.0**.
 
 ## **8. Licensing**
 
-This specification is licensed under the Apache License 2.0.
+This security specification standard is licensed under the Apache License 2.0.
 
 <br>
 
