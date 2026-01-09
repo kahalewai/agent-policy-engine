@@ -513,5 +513,5 @@ This specification is licensed under the Apache License 2.0.
 
 <br>
 
-## **End DAE Specification**
+## **End DAE Standard**
 
