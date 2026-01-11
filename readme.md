@@ -71,7 +71,6 @@ This makes APE suitable for:
 ## Core Design Principles
 
 APE is built on a few non-negotiable principles:
-
 * Separation of thinking and power
 * Explicit authority, never implicit
 * Determinism over heuristics
@@ -80,13 +79,17 @@ APE is built on a few non-negotiable principles:
 * Enforcement, not advice
 
 APE does not try to:
-
 * Align the model
 * Predict intent probabilistically
 * Trust LLM output
 * “Sandbox” tools heuristically
 
-It enforces rules at runtime.
+APE enforces rules at runtime.
+
+<br>
+
+APE is designed to conform to the DAE (Deterministic Agent Execution) Standard
+* DAE Standard v1.0.0 Document: https://github.com/kahalewai/dae
 
 <br>
 
@@ -267,8 +270,7 @@ APE ships with 5 ready-to-use default or example policies:
 
 * Example Policies can be found here: https://github.com/kahalewai/agent-policy-engine/tree/main/policies
 * APE also includes a helper tool to scan your MCP Server to auto generate APE Policy based on MCP config
-* To read more about using the MCP scanner (recommended approach), check the Implementation Guide:
-* https://github.com/kahalewai/agent-policy-engine/tree/main/python
+* To read more about using the MCP scanner (recommended approach), check the Implementation Guide: https://github.com/kahalewai/agent-policy-engine/tree/main/python
 
 
 <br>
