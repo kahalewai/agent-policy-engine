@@ -1,201 +1,208 @@
-# OWASP Risk Coverage — Agent Policy Engine (APE)  — OWASP Top 10 for LLM Applications
+# **Agent Policy Engine (APE) mapped to OWASP Top 10 LLM Risks**
 
-### **LLM01: Prompt Injection**
-
-**Status:** ✅ **Strongly Mitigated**
-
-**Risk**
-Untrusted input manipulates the model into executing unintended actions.
-
-**How APE Mitigates**
-
-* Explicit intent (machine-readable)
-* Data is never authority
-* Provenance labeling
-* Default-deny execution
-* Enforcement gate blocks unauthorized actions
-
-**Why This Matters**
-Prompt injection becomes **non-fatal** when language cannot grant authority.
+This document analyzes the security coverage of the **Agent Policy Engine (APE)** against the OWASP Top 10 LLM 2025 risks. It focuses on how APE components interact deterministically to enforce authority, policy, and state integrity.
 
 <br>
 
-### **LLM02: Insecure Output Handling**
-
-**Status:** ✅ **Mitigated**
-
-**Risk**
-LLM outputs are trusted blindly and fed into tools or systems.
-
-**How APE Mitigates**
-
-* Outputs do not directly trigger actions
-* Actions must be pre-declared in a plan
-* AuthorityTokens required for execution
-* Schema validation prevents malformed actions
-
-<br>
-
-### **LLM03: Training Data Poisoning**
-
-**Status:** ⚠️ **Partially Mitigated (Scope-Limited)**
-
-**Risk**
-Model behavior influenced by poisoned training data.
-
-**APE Position**
-
-* APE does **not** control model training
-* APE prevents poisoned behavior from gaining authority
-
-**Net Effect**
-Even if the model is poisoned, **damage is contained**.
+| Risk Category                     | Mitigation Status     |
+| --------------------------------- | --------------------- |
+| LLM01 Prompt Injection            | ✅ Strong              |
+| LLM02 Sensitive Info Disclosure   | ⚠️ Partial            |
+| LLM03 Supply Chain                | ⚠️ Partial / indirect |
+| LLM04 Data/Model Poisoning        | ⚠️ Partial            |
+| LLM05 Improper Output Handling    | ⚠️ Partial            |
+| LLM06 Excessive Agency            | ✅ Strong              |
+| LLM07 System Prompt Leakage       | ⚠️ Partial            |
+| LLM08 Vector/Embedding Weaknesses | ⚠️ Minimal            |
+| LLM09 Misinformation              | ⚠️ Indirect           |
+| LLM10 Unbounded Consumption       | ✅ Strong              |
 
 <br>
 
-### **LLM04: Model Denial of Service**
-
-**Status:** ❌ **Out of Scope**
-
-**Risk**
-Excessive or malicious usage exhausts model resources.
-
-**APE Position**
-
-* Not a rate-limiting or infra tool
-* Should be handled at platform level
+* **APE excels at operational enforcement:** Authority, deterministic execution, token lifecycle, policy evaluation, and state-machine governance.
+* **Risks outside the execution layer remain partially or fully outside scope:** LLM outputs, embeddings, model poisoning, prompt confidentiality, and supply chain integrity.
+* **Indirect protection:** Even for out-of-scope risks, APE **prevents unsafe execution**—meaning malicious instructions, poisoned vectors, or misinformation cannot trigger harmful actions.
 
 <br>
 
-### **LLM05: Supply Chain Vulnerabilities**
-
-**Status:** ⚠️ **Indirectly Mitigated**
-
-**Risk**
-Compromised dependencies or tools return malicious data.
-
-**How APE Helps**
-
-* External tool output marked untrusted
-* Data cannot expand authority
-* Tool calls still require explicit authorization
+APE strongly mitigates 3 of the 10 OWASP Top 10 LLM Risks, providing a **robust, deterministic enforcement layer** for LLM agents, turning probabilistic reasoning into safe, auditable, and capability-bound actions. While not a substitute for output validation, model vetting, or content filtering, APE is a **foundational security layer** that enforces the “execution-only” principle for AI agents.
 
 <br>
 
-### **LLM06: Sensitive Information Disclosure**
+## **LLM01: Prompt Injection**
 
-**Status:** ⚠️ **Partially Mitigated**
+**Risk Overview:**
+Malicious or unexpected inputs instruct the LLM to perform unintended actions, including leaking secrets, executing unauthorized plans, or bypassing policies.
 
-**Risk**
-Agents leak secrets or sensitive data.
+**APE Mitigation:**
 
-**How APE Helps**
+APE enforces **deterministic authority separation**:
 
-* Explicit action control (e.g., forbid exfiltration tools)
-* Policy can block data-export actions
-* Audit logging provides traceability
+1. **Runtime Controller:** Ensures that no action can execute unless explicitly authorized by AuthorityToken. Any plan proposed by the LLM is blocked unless it matches intent and passes validation.
+2. **Intent Manager & Plan Manager:** Canonically serialize and hash intents and plans. Any deviation introduced by injected prompts breaks hash bindings, invalidating AuthorityTokens.
+3. **Policy Engine:** Evaluates proposed actions against allowed rules. Any plan step influenced by a malicious prompt that violates policy results in `DENY` or `ESCALATE`.
+4. **Enforcement Gate:** Intercepts all tool calls; without a valid AuthorityToken, execution cannot proceed. Even if the LLM suggests malicious actions, they are blocked deterministically.
+5. **Provenance Manager:** Labels all user/external content. `EXTERNAL_UNTRUSTED` content can inform reasoning but **cannot influence authority issuance**.
 
-**Note**
-APE enforces *authority*, not data classification.
-
-<br>
-
-### **LLM07: Insecure Plugin / Tool Design**
-
-**Status:** ✅ **Strongly Mitigated**
-
-**Risk**
-Tools/plugins expose dangerous capabilities.
-
-**How APE Mitigates**
-
-* Tools cannot be called directly
-* Enforcement gate requires AuthorityToken
-* Policy restricts tool usage
-* Immutable plans prevent hidden calls
+**Effectiveness:** ✅ Strong mitigation. APE’s deterministic bindings ensure that injected instructions cannot bypass policy or gain authority.
 
 <br>
 
-### **LLM08: Excessive Agency**
+## **LLM02: Sensitive Information Disclosure**
 
-**Status:** ✅ **Directly Solved**
+**Risk Overview:**
+LLMs may expose sensitive information through outputs or logs.
 
-**Risk**
-Agents act beyond intended autonomy.
+**APE Mitigation:**
 
-**How APE Solves This**
+* **Scope Enforcement:** AuthorityTokens are **never serialized or transmitted**. They cannot be exfiltrated, even if an LLM suggests leaking them.
+* **Provenance Manager:** Prevents EXTERNAL_UNTRUSTED content from gaining authority that could result in sensitive data operations.
+* **Audit Logger:** Provides traceable records of actions, aiding detection of attempts to access sensitive operations.
 
-* Explicit intent
-* Immutable plans
-* Escalation requirements
-* Single-use authority tokens
+**Limitations / Out of Scope:**
+APE does not sanitize LLM outputs; disclosure of sensitive content from the LLM itself remains possible. However, **APE ensures that sensitive operations cannot be executed or escalated without proper authority**, reducing risk of system-level leakage.
 
-**This is one of APE’s primary design goals.**
-
-<br>
-
-### **LLM09: Overreliance on LLMs**
-
-**Status:** ⚠️ **Partially Mitigated**
-
-**Risk**
-Critical decisions delegated entirely to models.
-
-**How APE Helps**
-
-* Separates reasoning from authority
-* Enforcement is deterministic
-* Model decisions are advisory only
+**Effectiveness:** ✅ Partial mitigation; operational leaks prevented, output leakage outside APE’s scope.
 
 <br>
 
-### **LLM10: Improper Access Control**
+## **LLM03: Supply Chain Vulnerabilities**
 
-**Status:** ✅ **Directly Solved**
+**Risk Overview:**
+External models, datasets, plugins, or libraries may introduce hidden risks (e.g., backdoors, compromised logic).
 
-**Risk**
-LLMs lack traditional access control enforcement.
+**APE Mitigation:**
 
-**How APE Solves This**
+* **Policy Engine & Enforcement Gate:** Any action originating from compromised components must still pass authority checks. Unauthorized plans cannot execute.
+* **Schema Validation:** Ensures that data and plans from external sources conform to expected formats, limiting malformed data abuse.
+* **Formal Verification Exporter:** Enables static security review of policies and rules, which can catch unsafe interactions with third-party components.
 
-* Action-level authorization
-* Policy-driven enforcement
-* Tenant isolation
-* Mandatory execution gates
+**Limitations / Out of Scope:**
+APE does not vet external models or runtime dependencies; supply chain integrity is primarily outside its design. Mitigation is **indirect**, via deterministic enforcement and validation of any attempted action.
 
-<br>
-
-### ✅ Summary — OWASP LLM Top 10
-
-| Risk                   | Coverage       |
-| ---------------------- | -------------- |
-| LLM01 Prompt Injection | ✅ Strong       |
-| LLM02 Insecure Output  | ✅ Strong       |
-| LLM03 Data Poisoning   | ⚠️ Containment |
-| LLM04 DoS              | ❌ Out of scope |
-| LLM05 Supply Chain     | ⚠️ Partial     |
-| LLM06 Data Disclosure  | ⚠️ Partial     |
-| LLM07 Insecure Tools   | ✅ Strong       |
-| LLM08 Excessive Agency | ✅ Strong       |
-| LLM09 Overreliance     | ⚠️ Partial     |
-| LLM10 Access Control   | ✅ Strong       |
+**Effectiveness:** ⚠️ Partial / indirect mitigation; execution enforcement reduces impact, but supply chain risk itself is external.
 
 <br>
 
-> **APE does not try to solve every security problem.**
-> It solves the *agent-specific* ones that traditional security models miss.
+## **LLM04: Data and Model Poisoning**
 
-APE is best described as:
+**Risk Overview:**
+Malicious training or fine-tuning data may compromise reasoning or output quality.
 
-> **An access control and authority enforcement layer for AI agents**
+**APE Mitigation:**
 
-It **directly addresses** the most dangerous OWASP LLM risks:
+* **Authority Binding:** Actions, plans, and intents are cryptographically hashed. Poisoned input cannot generate valid AuthorityTokens unless aligned with policy.
+* **Provenance Manager:** EXTERNAL_UNTRUSTED data cannot create, modify, or escalate authority.
+* **Runtime Controller:** Prevents execution if plan hash or intent hash does not match approved state.
 
-* Prompt injection
-* Excessive agency
-* Insecure tool usage
-* Broken access control
+**Limitations / Out of Scope:**
+APE cannot detect reasoning bias or poisoned model outputs; it only prevents poisoned content from directly triggering unauthorized actions.
 
-And it **contains** the blast radius of others.
+**Effectiveness:** ⚠️ Partial mitigation; prevents operational consequences, but reasoning bias is outside APE’s scope.
 
----
+<br>
+
+## **LLM05: Improper Output Handling**
+
+**Risk Overview:**
+Model outputs used without validation may lead to exploits, unsafe behavior, or security violations.
+
+**APE Mitigation:**
+
+* **Schema Validators:** Ensure that all plan and intent objects conform to required formats before execution.
+* **Enforcement Gate & AuthorityTokens:** Prevent any action derived from malformed outputs from executing.
+* **Audit Logger:** Tracks execution and tool usage, enabling detection of misuse.
+
+**Limitations / Out of Scope:**
+APE does not filter or validate outputs delivered to end users. Output handling beyond authority control remains the responsibility of surrounding application logic.
+
+**Effectiveness:** ⚠️ Partial mitigation; execution enforcement ensures outputs cannot cause unauthorized action, but user-facing output risks remain.
+
+<br>
+
+## **LLM06: Excessive Agency**
+
+**Risk Overview:**
+LLMs acting with unchecked autonomy can perform harmful actions without oversight.
+
+**APE Mitigation:**
+
+* **Capability-Based Authority:** Only a valid, single-use AuthorityToken allows tool execution.
+* **Runtime State Machine:** Execution is allowed only in `EXECUTING` state; all other states block action.
+* **Policy Engine & Enforcement Gate:** Policies define allowed transitions and escalation requirements, preventing autonomous execution.
+* **AuthorityManager:** Ensures tokens cannot be reused or forged, preventing unintended chaining of autonomous actions.
+
+**Effectiveness:** ✅ Strong mitigation; LLM autonomy is fully constrained by deterministic authority enforcement.
+
+<br>
+
+## **LLM07: System Prompt Leakage**
+
+**Risk Overview:**
+Internal system prompts or instructions may be exposed to users or attackers.
+
+**APE Mitigation:**
+
+* **Provenance Enforcement:** EXTERNAL_UNTRUSTED content cannot gain authority from prompt data.
+* **AuthorityTokens & Enforcement Gate:** Even if prompts are leaked, no execution path can be triggered without token validation.
+* **Audit Logger:** Helps detect abnormal access patterns related to prompt use.
+
+**Limitations / Out of Scope:**
+APE does not actively prevent prompts from being output by the LLM. Leakage is technically possible, but **impact is minimized** as leaked prompts cannot control execution.
+
+**Effectiveness:** ⚠️ Partial mitigation; operational security preserved, source confidentiality outside APE scope.
+
+<br>
+
+## **LLM08: Vector and Embedding Weaknesses**
+
+**Risk Overview:**
+Manipulation of embeddings or vector stores may bias context retrieval or action selection.
+
+**APE Mitigation:**
+
+* **Policy Engine & AuthorityTokens:** Even if retrieved vectors suggest unsafe actions, execution is blocked unless plan + intent validation passes.
+* **Provenance Manager:** Flags external sources; untrusted vectors cannot grant authority.
+
+**Limitations / Out of Scope:**
+APE does not inspect or sanitize embeddings. Reasoning layer vulnerabilities are outside its design. APE mitigates only **operational execution** impact.
+
+**Effectiveness:** ⚠️ Minimal mitigation; prevents misuse of authority but cannot prevent reasoning-level manipulation.
+
+<br>
+
+## **LLM09: Misinformation**
+
+**Risk Overview:**
+LLMs may produce incorrect or misleading content that appears authoritative.
+
+**APE Mitigation:**
+
+* **Authority Binding:** Only actions conforming to validated intent and plan can execute.
+* **Policy Engine:** Any plan suggesting dangerous operations based on misinformation will be denied unless explicitly allowed.
+* **Audit Logger:** Provides traceability, supporting detection of repeated anomalous patterns.
+
+**Limitations / Out of Scope:**
+APE cannot prevent the LLM from generating false content. Only **operational misuse** is controlled.
+
+**Effectiveness:** ⚠️ Indirect mitigation; ensures false outputs do not translate into unauthorized actions.
+
+<br>
+
+## **LLM10: Unbounded Consumption**
+
+**Risk Overview:**
+Excessive token use, API calls, or action execution may cause resource exhaustion or denial-of-service.
+
+**APE Mitigation:**
+
+* **AuthorityTokens:** Single-use, bound to plan step; prevents repeated or infinite execution loops.
+* **Runtime State Machine:** Execution only allowed in `EXECUTING`; illegal transitions rejected deterministically.
+* **Policy Engine:** Can limit allowed actions and enforce default-deny.
+* **Multi-Tenant Mode:** Optional isolation prevents one tenant from affecting another’s resource usage.
+
+**Effectiveness:** ✅ Strong mitigation; deterministic enforcement ensures controlled consumption of actions and prevents runaway execution.
+
+<br>
+
+Back to https://github.com/kahalewai/agent-policy-engine
