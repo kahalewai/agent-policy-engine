@@ -469,12 +469,6 @@ Before contributing, please understand:
 * New features must preserve default safety
   
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<p align="center">
-▁ ▂ ▄ ▅ ▆ ▇ █   Built with Aloha by Kahalewai - 2026  █ ▇ ▆ ▅ ▄ ▂ ▁
+
 </p>
 <br>
