@@ -73,6 +73,8 @@ This makes APE suitable for:
 APE is designed to conform to the DAE (Deterministic Agent Execution) Standard
 * DAE Standard v1.0.0 Document: https://github.com/kahalewai/dae
 
+<br>
+
 APE is built on a few non-negotiable principles:
 * Separation of thinking and power
 * Explicit authority, never implicit
