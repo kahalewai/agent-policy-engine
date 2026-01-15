@@ -2,7 +2,7 @@
 
 # Agent Policy Engine (APE)
 
-**A deterministic, capability-based security runtime for agentic systems**
+**A deterministic, capability-based security runtime (PEP) for agentic systems**
 ![ape5](https://github.com/user-attachments/assets/ba141cf5-0c13-4577-8b9f-ac4950aab286)
 <br>
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -13,7 +13,7 @@
 <br>
 
 
-APE is an open-source policy enforcement engine designed to make AI agents safe to run in real production environments. APE does not rely on model alignment, prompt tricks, or “best effort” guardrails. Instead, APE enforces hard security boundaries between reasoning and action. APE functions as a policy enforcement point (PEP) for your agentic workflows.
+APE is an open-source policy enforcement engine designed to make AI agents safe to run in real production environments. APE does not rely on model alignment, prompt tricks, or “best effort” guardrails. Instead, APE enforces hard security boundaries between reasoning and action. APE functions as a policy enforcement point (PEP) for your agentic workflows, creating a new security control that aligns with Zero Trust principles.
 
 <br>
 
