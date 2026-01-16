@@ -422,7 +422,7 @@ The goal of APE is not to build another agent framework.
 
 The goal is to provide:
 
-* A security substrate for agents
+* A security foundation for agent actions
 * A reference architecture for safe execution
 * A shared enforcement layer across ecosystems
 
