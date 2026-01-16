@@ -405,7 +405,7 @@ APE is open source because:
 * Security infrastructure must be inspectable
 * Enforcement logic should be reviewable
 * Trust should come from correctness, not obscurity
-* The agent ecosystem needs shared primitives, not closed silos
+* The agent ecosystem needs shared solutions, not closed silos
 
 Open sourcing APE allows:
 
