@@ -434,7 +434,7 @@ APE is designed to be embedded, reused, and extended.
 
 <br>
 
-## Non-Goals
+## What APE will not do for you
 
 APE does not:
 
@@ -444,7 +444,7 @@ APE does not:
 * Persist long-lived authority
 * Solve alignment at the model level
 
-It solves authority and enforcement - deliberately and correctly.
+APE solves authority and enforcement, period.
 
 <br>
 
