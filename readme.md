@@ -120,9 +120,7 @@ An agent may propose actions, but APE decides what is allowed.
 install from source:
 
 ```bash
-git clone https://github.com/kahalewai/agent-policy-engine/python.git
-cd python
-pip install -e .
+pip install agent-policy-engine
 ```
 
 <br>
