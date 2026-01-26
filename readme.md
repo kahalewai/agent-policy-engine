@@ -117,9 +117,8 @@ An agent may propose actions, but APE decides what is allowed.
 
 ## Installing and using APE
 
-install from source:
-
 ```bash
+# Install APE
 pip install agent-policy-engine
 ```
 
