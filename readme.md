@@ -1,6 +1,7 @@
 <div align="center">
 
-<img width="458" height="409" alt="ape-logo" src="https://github.com/user-attachments/assets/7211636d-46d8-453e-bdcd-0e66d38a789c" />
+<img width="477" height="464" alt="ape-logo2" src="https://github.com/user-attachments/assets/a24be8df-6956-4bc2-9346-0a6dacb83f8a" />
+
 
 [![DAE](https://img.shields.io/badge/DAE-v1.0.0-blue)](https://github.com/kahalewai/dae)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
