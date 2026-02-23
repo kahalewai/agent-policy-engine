@@ -125,6 +125,8 @@ cd ape
 pip install -e .
 ```
 
+<br>
+
 ## Quick Start
 
 APE offers two integration paths: **Orchestrator** (simple) and **Manual** (full control).
