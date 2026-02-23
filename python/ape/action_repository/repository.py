@@ -1,7 +1,7 @@
 """
 APE Action Repository
 
-Per architecture spec (v1.0.1 §6.1 Action Repository):
+Action Repository:
 - The Action Repository is the canonical registry of all valid actions
 - It provides a bounded, enumerable set of known actions
 - Actions are defined with schemas, risk levels, and tool bindings
