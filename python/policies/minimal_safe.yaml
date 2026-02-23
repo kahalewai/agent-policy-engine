@@ -1,0 +1,61 @@
+# APE Policy: Minimal Safe (Recommended Default)
+# 
+# This is the recommended starting point for most users.
+# It follows the principle of least privilege and demonstrates
+# APE's core features: allow, deny, and escalation.
+#
+# Characteristics:
+# - Allows only basic read operations
+# - Escalates state-changing operations
+# - Denies destructive operations
+# - Default deny for unlisted actions
+
+name: minimal_safe
+version: "1.0.0"
+description: >
+  Minimal safe policy - the recommended starting point.
+  Allows basic reads, escalates writes, denies destructive actions.
+
+# Default deny: actions not listed are denied
+default_deny: true
+
+# Explicitly allowed actions (safe, read-only operations)
+allowed_actions:
+  - read_file
+  - list_directory
+  - get_file_info
+  - search_files
+  - read_config
+  - get_status
+  - query_data
+  - fetch_url
+
+# Explicitly forbidden actions (dangerous, irreversible)
+forbidden_actions:
+  - delete_file
+  - delete_directory
+  - drop_database
+  - format_disk
+  - rm_rf
+  - shutdown_system
+  - destroy_resource
+
+# Actions requiring escalation (state-changing but not destructive)
+escalation_required:
+  - write_file
+  - create_file
+  - update_file
+  - create_directory
+  - move_file
+  - copy_file
+  - send_email
+  - post_to_api
+  - execute_command
+
+metadata:
+  category: starter
+  risk_level: low
+  recommended_for:
+    - first_time_users
+    - read_only_agents
+    - data_analysis
