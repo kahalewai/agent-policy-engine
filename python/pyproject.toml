@@ -1,14 +1,24 @@
 [project]
 name = "agent-policy-engine"
-version = "1.0.0"
+version = "1.0.2"
 description = "Deterministic, capability-based policy enforcement runtime for AI agents"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 authors = [
-    {name = "APE Contributors"}
+    {name = "Kahalewai"}
 ]
-keywords = ["ai", "agents", "security", "policy", "enforcement", "llm", "mcp"]
+keywords = [
+    "ai",
+    "agents",
+    "security",
+    "policy",
+    "enforcement",
+    "llm",
+    "mcp",
+    "intent",
+    "orchestration",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -19,6 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Security",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
     "pyyaml>=6.0",
@@ -38,8 +49,9 @@ ape = "ape.cli.main:main"
 
 [project.urls]
 Homepage = "https://github.com/kahalewai/agent-policy-engine"
-Documentation = "https://github.com/kahalewai/agent-policy-engine"
+Documentation = "https://github.com/kahalewai/agent-policy-engine#readme"
 Repository = "https://github.com/kahalewai/agent-policy-engine"
+Changelog = "https://github.com/kahalewai/agent-policy-engine/blob/main/CHANGELOG.md"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -56,11 +68,17 @@ ape = ["**/*.json", "**/*.yaml"]
 line-length = 100
 target-version = "py310"
 
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4"]
+ignore = ["E501"]  # Line length handled separately
+
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+addopts = "-v --tb=short"
