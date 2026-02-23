@@ -1,0 +1,99 @@
+# APE Policy: Human-in-the-Loop
+#
+# Policy designed for high-security environments where
+# most operations require human approval.
+#
+# Characteristics:
+# - Allows only planning and simulation
+# - Escalates most real operations
+# - Denies irreversible operations
+# - Perfect for enterprise demos and regulated environments
+
+name: human_in_loop
+version: "1.0.0"
+description: >
+  Human-in-the-loop policy for maximum oversight.
+  Most operations require explicit human approval.
+
+default_deny: true
+
+# Only safe, reversible operations allowed without approval
+allowed_actions:
+  # Planning and analysis (no side effects)
+  - plan_action
+  - analyze_request
+  - validate_input
+  - parse_request
+  - format_output
+  
+  # Read-only operations
+  - read_file
+  - list_directory
+  - get_file_info
+  - get_status
+  - query_data
+  
+  # Simulation (dry-run)
+  - simulate_action
+  - dry_run
+  - preview_changes
+  - estimate_impact
+  - validate_plan
+
+# Permanently destructive operations forbidden
+forbidden_actions:
+  - delete_file
+  - delete_directory
+  - drop_database
+  - drop_table
+  - destroy_resource
+  - format_disk
+  - rm_rf
+  - shutdown_system
+  - terminate_process
+
+# Everything else requires human approval
+escalation_required:
+  # File modifications
+  - write_file
+  - create_file
+  - update_file
+  - move_file
+  - copy_file
+  - rename_file
+  - create_directory
+  
+  # Data modifications
+  - insert_data
+  - update_data
+  - create_record
+  - modify_record
+  
+  # External communications
+  - send_email
+  - send_notification
+  - post_to_api
+  - http_post
+  - publish_message
+  
+  # System operations
+  - execute_command
+  - run_script
+  - start_process
+  - restart_service
+  
+  # Deployment
+  - deploy_application
+  - deploy_production
+  - update_configuration
+  - rollback_deployment
+
+metadata:
+  category: high_security
+  risk_level: controlled
+  recommended_for:
+    - enterprise_demos
+    - regulated_environments
+    - financial_systems
+    - healthcare_systems
+    - high_value_operations
