@@ -1,0 +1,107 @@
+# APE Policy: Read-Only Agent
+#
+# Extremely safe policy for agents that only need to read data.
+# No write, update, or delete operations are permitted.
+# Perfect for data analysis, reporting, and monitoring agents.
+#
+# Characteristics:
+# - Allows all read operations
+# - Denies all write/update/delete operations
+# - Default deny for unlisted actions
+
+name: read_only
+version: "1.0.0"
+description: >
+  Read-only policy for data analysis and reporting agents.
+  No modifications to any resources permitted.
+
+default_deny: true
+
+# All read-related actions allowed
+allowed_actions:
+  # File operations
+  - read_file
+  - list_directory
+  - list_files
+  - get_file_info
+  - get_file_metadata
+  - search_files
+  - find_files
+  - stat_file
+  - check_file_exists
+  
+  # Data operations
+  - query_data
+  - select_data
+  - read_database
+  - fetch_record
+  - list_records
+  - count_records
+  - aggregate_data
+  
+  # API operations
+  - fetch_url
+  - http_get
+  - api_get
+  - read_api
+  
+  # Configuration
+  - read_config
+  - get_config
+  - list_config
+  
+  # Status/monitoring
+  - get_status
+  - check_status
+  - get_metrics
+  - read_logs
+  - list_logs
+
+# All write/modify/delete operations forbidden
+forbidden_actions:
+  # File modifications
+  - write_file
+  - create_file
+  - update_file
+  - delete_file
+  - move_file
+  - copy_file
+  - rename_file
+  - create_directory
+  - delete_directory
+  - chmod_file
+  
+  # Data modifications
+  - insert_data
+  - update_data
+  - delete_data
+  - drop_table
+  - truncate_table
+  - create_table
+  
+  # API modifications
+  - http_post
+  - http_put
+  - http_patch
+  - http_delete
+  - api_post
+  - api_put
+  - api_delete
+  
+  # System operations
+  - execute_command
+  - run_shell
+  - send_email
+  - send_notification
+
+# Nothing requires escalation - just deny if not allowed
+escalation_required: []
+
+metadata:
+  category: safe
+  risk_level: minimal
+  recommended_for:
+    - data_analysis
+    - reporting
+    - monitoring
+    - audit_agents
