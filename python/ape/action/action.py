@@ -1,7 +1,7 @@
 """
 APE Action Module
 
-Per architecture spec (§5.3 Action):
+Action:
 - An Action is the smallest unit of authority
 - Actions are explicit, comparable, auditable, deterministically bound to authority
 - Actions are matchable by policy
