@@ -6,7 +6,7 @@
 [![DAE](https://img.shields.io/badge/DAE-v1.0.0-blue)](https://github.com/kahalewai/dae)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-orange.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.1-red.svg)](https://github.com/kahalewai/agent-policy-engine)
+[![Version](https://img.shields.io/badge/version-1.0.2-red.svg)](https://github.com/kahalewai/agent-policy-engine)
 
 </div>
 
@@ -114,116 +114,116 @@ An agent may propose actions, but APE decides what is allowed.
 ## Installing and using APE
 
 ```bash
-# Install APE
 pip install agent-policy-engine
 ```
 
-<br>
+Or from source:
 
-### Implementation Overview
-
-#### 1. Create a Policy
-
-```yaml
-# policies/my_policy.yaml
-name: my_first_policy
-version: "1.0.0"
-default_deny: true
-
-allowed_actions:
-  - read_file
-  - list_directory
-
-forbidden_actions:
-  - delete_file
-  - rm_rf
-
-escalation_required:
-  - write_file
+```bash
+git clone https://github.com/kahalewai/agent-policy-engine/python.git
+cd ape
+pip install -e .
 ```
 
-#### 2. Use APE in Your Agent
+## Quick Start
+
+APE offers two integration paths: **Orchestrator** (simple) and **Manual** (full control).
+
+### Orchestrator Path (Recommended for Most Use Cases)
 
 ```python
-from ape import PolicyEngine, RuntimeConfig, EnforcementMode
+from ape import APEOrchestrator
 
-# Load policy
-policy = PolicyEngine("policies/my_policy.yaml")
+# Create orchestrator from policy
+orch = APEOrchestrator.from_policy("policies/read_only.yaml")
 
-# Check if an action is allowed
-result = policy.evaluate("read_file")
-print(result.decision)  # PolicyDecision.ALLOW
+# Register your tool implementations
+orch.register_tool("read_file", lambda path: open(path).read())
+orch.register_tool("list_directory", lambda path: os.listdir(path))
 
-result = policy.evaluate("delete_file")
-print(result.decision)  # PolicyDecision.DENY
+# Execute with one-call API
+result = orch.execute("Read the config.json file")
+
+if result.success:
+    print(result.results[0])  # File contents
+else:
+    print(f"Error: {result.error}")
 ```
 
-#### 3. Full Agent Integration
+### Session-Aware Execution
+
+```python
+# Create a session for multi-turn conversations
+session = orch.create_session(user_id="user_123", ttl_minutes=30)
+
+result1 = session.execute("Read config.json")       # Tracked
+result2 = session.execute("Now update it")           # Knows context
+
+# Session tracks cumulative behavior
+print(session.actions_executed)   # ["read_file", "write_file"]
+print(session.cumulative_risk)    # 0.4
+print(session.time_remaining)     # 1740 seconds
+session.get_usage_summary()
+```
+
+### Manual Path (Maximum Control)
 
 ```python
 from ape import (
-    RuntimeOrchestrator,
-    IntentManager,
-    PlanManager,
-    PolicyEngine,
-    AuthorityManager,
-    EnforcementGate,
-    RuntimeConfig,
-    RuntimeState,
-    Action,
-    Provenance,
+    PolicyEngine, IntentManager, PlanManager,
+    RuntimeOrchestrator, AuthorityManager, EnforcementGate,
+    ActionRepository, IntentCompiler, PlanGenerator,
+    Action, Provenance, RuntimeState,
+    create_standard_repository,
 )
 
-# Initialize components
-runtime = RuntimeOrchestrator()
-intent = IntentManager()
-plan = PlanManager(intent)
-policy = PolicyEngine("policies/my_policy.yaml")
-authority = AuthorityManager(runtime)
-config = RuntimeConfig()
-enforcement = EnforcementGate(authority, config)
+# 1. Setup components
+repository = create_standard_repository()
+policy = PolicyEngine("policies/read_only.yaml")
+compiler = IntentCompiler(repository)
+generator = PlanGenerator(repository)
 
-# Set intent (from user)
-intent.set({
-    "allowed_actions": ["read_file"],
-    "forbidden_actions": [],
-    "scope": "file_reading"
-}, Provenance.USER_TRUSTED)
+# 2. Compile intent from prompt
+intent = compiler.compile(
+    prompt="Read the config.json file",
+    policy_allowed=policy.get_all_allowed_actions(),
+)
+
+# 3. Generate plan
+plan = generator.generate(intent)
+
+# 4. Setup APE runtime
+runtime = RuntimeOrchestrator()
+intent_manager = IntentManager()
+plan_manager = PlanManager(intent_manager)
+authority = AuthorityManager(runtime)
+enforcement = EnforcementGate(authority)
+
+# 5. Execute through APE
+intent_version = intent_manager.set(intent.to_ape_intent(), Provenance.USER_TRUSTED)
 runtime.transition(RuntimeState.INTENT_SET)
 
-# Submit and approve plan
-plan.submit({
-    "steps": [
-        {"action_id": "read_file", "tool_id": "file_reader", "parameters": {"path": "data.txt"}}
-    ]
-}, Provenance.USER_TRUSTED)
-plan.approve()
+plan_hash = plan_manager.submit(plan.to_ape_plan(), Provenance.USER_TRUSTED)
+plan_manager.approve()
 runtime.transition(RuntimeState.PLAN_APPROVED)
 
-# Execute
 runtime.transition(RuntimeState.EXECUTING)
-for idx, step in enumerate(plan.plan):
+
+for idx, step in enumerate(plan.steps):
     action = Action(
         action_id=step.action_id,
         tool_id=step.tool_id,
         parameters=step.parameters,
-        intent_version=intent.version,
-        plan_hash=plan.hash,
-        plan_step_index=idx
+        intent_version=intent_version,
+        plan_hash=plan_hash,
+        plan_step_index=idx,
     )
     
-    # Evaluate policy
     policy.evaluate_or_raise(action.action_id)
-    
-    # Get authority token
-    token = authority.issue(
-        intent_version=intent.version,
-        plan_hash=plan.hash,
-        action=action
-    )
-    
-    # Execute through enforcement gate
-    result = enforcement.execute(token, my_tool, action, **action.parameters)
+    token = authority.issue(intent_version, plan_hash, action)
+    result = enforcement.execute(token, my_tool, action, **step.parameters)
+
+runtime.transition(RuntimeState.TERMINATED)
 ```
 
 <br>
@@ -234,43 +234,129 @@ For full and detailed instructions on how to install and use APE, please read th
 
 <br>
 
-## CLI Usage
+## CLI Tools
 
 ```bash
-# Validate a policy
+# Validate a policy file
 ape validate policies/my_policy.yaml
 
-# Simulate policy evaluation
-ape simulate policies/my_policy.yaml read_file
-ape simulate policies/my_policy.yaml delete_file
+# Test a prompt through the full pipeline
+ape test-prompt policies/read_only.yaml "Read the config file"
 
-# Show policy information
-ape info policies/my_policy.yaml --json
+# Analyze a prompt without policy check
+ape analyze "Read config.json and delete temp files"
 
-# Generate policy from MCP configuration
-ape mcp-scan mcp_config.json -o generated_policy.yaml
+# Simulate policy evaluation for an action
+ape simulate policies/read_only.yaml read_file
 
-# Show MCP configuration tools
-ape mcp-info mcp_config.json
+# Compare two policies
+ape diff policies/read_only.yaml policies/development.yaml
+
+# List available actions
+ape actions --by-category
+
+# Scan MCP configuration and generate policy
+ape mcp-scan ~/.config/claude/claude_desktop_config.json -o policies/mcp_generated.yaml
 ```
 
 <br>
 
-## Default / Example Policies
 
-APE ships with 5 ready-to-use default or example policies:
+## Policy Configuration
+Policies are YAML files that define allowed actions with optional parameter conditions.
 
-| Policy | Use Case | Risk Level |
-|--------|----------|------------|
-| `minimal_safe.yaml` | Starting point for most users | Low |
-| `read_only.yaml` | Data analysis, reporting | Minimal |
-| `filesystem_scoped.yaml` | Build agents, config management | Moderate |
-| `human_in_loop.yaml` | Enterprise, regulated environments | Controlled |
-| `development.yaml` | Development/testing only | High |
+```yaml
+# policies/read_only.yaml
+name: read_only
+version: "1.0"
+description: "Read-only file access"
 
-* Example Policies can be found here: https://github.com/kahalewai/agent-policy-engine/tree/main/policies
-* APE also includes a helper tool to scan your MCP Server to auto generate APE Policy based on MCP config
-* To read more about using the MCP scanner (recommended approach), check the Implementation Guide: https://github.com/kahalewai/agent-policy-engine/tree/main/python
+default_decision: deny
+
+rules:
+  - action: read_file
+    decision: allow
+    
+  - action: list_directory
+    decision: allow
+    
+  - action: write_file
+    decision: deny
+    
+  - action: delete_file
+    decision: deny
+```
+
+### Parameterized Conditions
+
+```yaml
+# policies/scoped_access.yaml
+rules:
+  - action: write_file
+    decision: allow
+    conditions:
+      path:
+        prefix: ["/tmp/", "/home/user/workspace/"]
+      size_bytes:
+        max: 10485760
+
+  - action: http_get
+    decision: allow
+    conditions:
+      domain:
+        allowlist: ["api.github.com", "*.internal.corp"]
+```
+
+### Example Policies
+
+| Policy | Description |
+|--------|-------------|
+| `minimal_safe.yaml` | Minimal read-only, maximum safety |
+| `read_only.yaml` | File reading only |
+| `development.yaml` | Broader permissions for development |
+| `filesystem_scoped.yaml` | Path-constrained file access |
+| `human_in_loop.yaml` | All actions require escalation |
+
+<br>
+
+## Risk Levels
+
+Actions are classified by risk:
+
+| Level | Description | Default Behavior |
+|-------|-------------|------------------|
+| MINIMAL | Read-only, no side effects | Allowed |
+| LOW | Reversible side effects | Allowed |
+| MODERATE | Irreversible but recoverable | Allowed with caution |
+| HIGH | Potentially destructive | Requires escalation |
+| CRITICAL | Requires explicit approval | Always escalates |
+
+<br>
+
+## Error Handling
+
+APE provides typed, deterministic errors:
+
+```python
+from ape import (
+    PolicyDenyError,
+    EscalationRequiredError,
+    IntentAmbiguityError,
+    PlanValidationError,
+    RateLimitExceededError,
+    SessionExpiredError,
+    PolicyConditionError,
+)
+
+try:
+    result = orch.execute("Delete all files")
+except PolicyDenyError as e:
+    print(f"Policy denied: {e.action_id}")
+except EscalationRequiredError as e:
+    print(f"Needs approval: {e.action_id}")
+except RateLimitExceededError:
+    print("Rate limit exceeded, try again later")
+```
 
 
 <br>
