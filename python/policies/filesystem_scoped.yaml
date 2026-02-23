@@ -1,0 +1,102 @@
+# APE Policy: Filesystem Scoped
+#
+# Policy for agents that need file system access within boundaries.
+# Useful for config management, build agents, and code refactoring.
+#
+# Characteristics:
+# - Allows read/write in designated areas
+# - Escalates delete operations
+# - Denies system-level operations
+# - Default deny for unlisted actions
+
+name: filesystem_scoped
+version: "1.0.0"
+description: >
+  Filesystem policy for build agents and config management.
+  Allows file operations, escalates deletes, denies system ops.
+
+default_deny: true
+
+# Standard file operations allowed
+allowed_actions:
+  # Read operations
+  - read_file
+  - list_directory
+  - list_files
+  - get_file_info
+  - search_files
+  - find_files
+  - check_file_exists
+  
+  # Write operations (within scope)
+  - write_file
+  - create_file
+  - update_file
+  - append_file
+  - create_directory
+  
+  # Safe file management
+  - copy_file
+  - move_file
+  - rename_file
+  
+  # Code/config operations
+  - read_config
+  - write_config
+  - parse_json
+  - parse_yaml
+  - validate_syntax
+
+# Destructive operations forbidden
+forbidden_actions:
+  # Dangerous file operations
+  - rm_rf
+  - format_disk
+  - recursive_delete
+  
+  # System operations
+  - execute_command
+  - run_shell
+  - execute_script
+  - spawn_process
+  
+  # Network operations
+  - fetch_url
+  - http_post
+  - send_email
+  - upload_file
+  
+  # Permission changes
+  - chmod_file
+  - chown_file
+  - set_permissions
+
+# Delete operations require escalation
+escalation_required:
+  - delete_file
+  - delete_directory
+  - remove_file
+  - remove_directory
+  - truncate_file
+  - overwrite_file
+
+# Tool transition rules (optional)
+# Limits which tools can follow which
+tool_transitions:
+  read_file:
+    - write_file
+    - update_file
+    - copy_file
+  list_directory:
+    - read_file
+    - create_file
+    - create_directory
+
+metadata:
+  category: scoped
+  risk_level: moderate
+  recommended_for:
+    - build_agents
+    - config_management
+    - code_refactoring
+    - documentation_agents
