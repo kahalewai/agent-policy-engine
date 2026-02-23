@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ape.dev/schemas/policy.json",
+  "title": "APE Policy Schema",
+  "description": "Schema for APE Policy files - deterministic rule sets for action enforcement",
+  "type": "object",
+  "required": ["allowed_actions", "forbidden_actions"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this policy"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of this policy"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of this policy"
+    },
+    "allowed_actions": {
+      "type": "array",
+      "description": "List of action IDs explicitly allowed by this policy",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "forbidden_actions": {
+      "type": "array",
+      "description": "List of action IDs explicitly forbidden by this policy",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "escalation_required": {
+      "type": "array",
+      "description": "List of action IDs that require escalation approval",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "default_deny": {
+      "type": "boolean",
+      "description": "If true, actions not in allowed list are denied (default: true)"
+    },
+    "tool_transitions": {
+      "type": "object",
+      "description": "Rules for allowed tool transitions",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata for the policy"
+    }
+  },
+  "additionalProperties": false
+}
